@@ -1,0 +1,853 @@
+
+> secretary-os@0.1.0 start:dashboard /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/dashboard dev
+
+
+> @secretaryos/dashboard@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/dashboard
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://169.254.227.144:3000
+
+ ✓ Starting...
+ ✓ Ready in 1503ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1964ms (632 modules)
+ ✓ Compiled /_not-found in 98ms (605 modules)
+ GET /usage/summary?window=today 404 in 254ms
+ GET /health 404 in 252ms
+ GET /sessions 404 in 253ms
+ GET / 200 in 2455ms
+ GET /health 404 in 98ms
+ GET /sessions 404 in 98ms
+ GET /usage/summary?window=today 404 in 99ms
+ GET / 200 in 148ms
+ ✓ Compiled /tasks in 159ms (607 modules)
+ ✓ Compiled /approvals in 175ms (609 modules)
+[?25h
+
+> secretary-os@0.1.0 start:dashboard /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/dashboard dev
+
+
+> @secretaryos/dashboard@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/dashboard
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://169.254.227.144:3000
+
+ ✓ Starting...
+ ✓ Ready in 1178ms
+ ✓ Compiled /approvals in 474ms (599 modules)
+ GET /approvals 200 in 4857ms
+ GET /approvals 200 in 4334ms
+ ✓ Compiled / in 375ms (602 modules)
+ ⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/approvals'
+}
+ ⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/approvals'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1245ms (953 modules)
+ GET /sessions 404 in 1610ms
+ GET /health 404 in 1614ms
+ GET /usage/summary?window=today 404 in 1613ms
+ GET / 200 in 2123ms
+ GET /approvals 500 in 1706ms
+ GET /approvals 500 in 1706ms
+ GET /approvals 200 in 1837ms
+ GET /approvals 200 in 1839ms
+ GET /approvals 200 in 2354ms
+ GET /approvals 200 in 2357ms
+ GET /approvals 200 in 2435ms
+ GET /approvals 200 in 2435ms
+ GET /approvals 200 in 2511ms
+ GET /approvals 200 in 2512ms
+ GET /approvals 200 in 2589ms
+ GET /approvals 200 in 2589ms
+ GET /approvals 200 in 2693ms
+ GET /approvals 200 in 2680ms
+ GET /approvals 200 in 2768ms
+ GET /approvals 200 in 2771ms
+ GET /approvals 200 in 2847ms
+ GET /approvals 200 in 2849ms
+ GET /approvals 200 in 2928ms
+ GET /approvals 200 in 2932ms
+ GET /approvals 200 in 3017ms
+ GET /approvals 200 in 3023ms
+ GET /approvals 200 in 3107ms
+ GET /approvals 200 in 3115ms
+ GET /approvals 200 in 3205ms
+ GET /approvals 200 in 3209ms
+ GET /approvals 200 in 3287ms
+ GET /approvals 200 in 3300ms
+ GET /approvals 200 in 3383ms
+ GET /approvals 200 in 3395ms
+ GET /approvals 200 in 3472ms
+ GET /approvals 200 in 3484ms
+ GET /approvals 200 in 3554ms
+ GET /approvals 200 in 3565ms
+ GET /approvals 200 in 3632ms
+ GET /approvals 200 in 3641ms
+ GET /approvals 200 in 3715ms
+ GET /approvals 200 in 3727ms
+ GET /approvals 200 in 3798ms
+ GET /approvals 200 in 3807ms
+ GET /approvals 200 in 3874ms
+ GET /approvals 200 in 3883ms
+ GET /approvals 200 in 3949ms
+ GET /approvals 200 in 3958ms
+ GET /approvals 200 in 4022ms
+ GET /approvals 200 in 4040ms
+ GET /approvals 200 in 4105ms
+ GET /approvals 200 in 4116ms
+ GET /approvals 200 in 4190ms
+ GET /approvals 200 in 4200ms
+ GET /approvals 200 in 4265ms
+ GET /approvals 200 in 4275ms
+ GET /approvals 200 in 4340ms
+ GET /approvals 200 in 4350ms
+ GET /approvals 200 in 4424ms
+ GET /approvals 200 in 4434ms
+ GET /approvals 200 in 4499ms
+ GET /approvals 200 in 4509ms
+ GET /approvals 200 in 4575ms
+ GET /approvals 200 in 4585ms
+ GET /approvals 200 in 4657ms
+ GET /approvals 200 in 4667ms
+ GET /approvals 200 in 4742ms
+ GET /approvals 200 in 4752ms
+ GET /approvals 200 in 4822ms
+ GET /approvals 200 in 4831ms
+ GET /approvals 200 in 4898ms
+ GET /approvals 200 in 4908ms
+ GET /approvals 200 in 4975ms
+ GET /approvals 200 in 4977ms
+ GET /approvals 200 in 5049ms
+ GET /approvals 200 in 5054ms
+ GET /approvals 200 in 5137ms
+ GET /approvals 200 in 5138ms
+ GET /approvals 200 in 5210ms
+ GET /approvals 200 in 5212ms
+ GET /approvals 200 in 5286ms
+ GET /approvals 200 in 5289ms
+ GET /approvals 200 in 5361ms
+ GET /approvals 200 in 5365ms
+ GET /approvals 200 in 5444ms
+ GET /approvals 200 in 5445ms
+ GET /approvals 200 in 5517ms
+ GET /approvals 200 in 5520ms
+ GET /approvals 200 in 5598ms
+ GET /approvals 200 in 5599ms
+ GET /approvals 200 in 5673ms
+ GET /approvals 200 in 5674ms
+ GET /approvals 200 in 5754ms
+ GET /approvals 200 in 5755ms
+ GET /approvals 200 in 5827ms
+ GET /approvals 200 in 5833ms
+ GET /approvals 200 in 5905ms
+ GET /approvals 200 in 5906ms
+ GET /approvals 200 in 5980ms
+ GET /approvals 200 in 5982ms
+ GET /approvals 200 in 6067ms
+ GET /approvals 200 in 6068ms
+ GET /approvals 200 in 6140ms
+ GET /approvals 200 in 6142ms
+ GET /approvals 200 in 6214ms
+ GET /approvals 200 in 6220ms
+ GET /approvals 200 in 6287ms
+ GET /approvals 200 in 6293ms
+ GET /approvals 200 in 6362ms
+ GET /approvals 200 in 6370ms
+ GET /approvals 200 in 6444ms
+ GET /approvals 200 in 6453ms
+ GET /approvals 200 in 6523ms
+ GET /approvals 200 in 6534ms
+ GET /approvals 200 in 6597ms
+ GET /approvals 200 in 6607ms
+ GET /approvals 200 in 6671ms
+ GET /approvals 200 in 6681ms
+ GET /approvals 200 in 6752ms
+ GET /approvals 200 in 6762ms
+ GET /approvals 200 in 6827ms
+ GET /approvals 200 in 6837ms
+ GET /approvals 200 in 6903ms
+ GET /approvals 200 in 6912ms
+ GET /approvals 200 in 6982ms
+ GET /approvals 200 in 6993ms
+ GET /approvals 200 in 7061ms
+ GET /approvals 200 in 7072ms
+ GET /approvals 200 in 7137ms
+ GET /approvals 200 in 7147ms
+ GET /approvals 200 in 7214ms
+ GET /approvals 200 in 7219ms
+ GET /approvals 200 in 7289ms
+ GET /approvals 200 in 7295ms
+ GET /approvals 200 in 7366ms
+ GET /approvals 200 in 7371ms
+ GET /approvals 200 in 7454ms
+ GET /approvals 200 in 7464ms
+ GET /approvals 200 in 7530ms
+ GET /approvals 200 in 7539ms
+ GET /approvals 200 in 7606ms
+ GET /approvals 200 in 7617ms
+ GET /approvals 200 in 7681ms
+ GET /approvals 200 in 7693ms
+ GET /approvals 200 in 7763ms
+ GET /approvals 200 in 7775ms
+ GET /approvals 200 in 7839ms
+ GET /approvals 200 in 7848ms
+ GET /approvals 200 in 7920ms
+ GET /approvals 200 in 7931ms
+ GET /approvals 200 in 7995ms
+ GET /approvals 200 in 8007ms
+ GET /approvals 200 in 8072ms
+ GET /approvals 200 in 8091ms
+ GET /approvals 200 in 8156ms
+ GET /approvals 200 in 8169ms
+ GET /approvals 200 in 8243ms
+ GET /approvals 200 in 8254ms
+ GET /approvals 200 in 8320ms
+ GET /approvals 200 in 8330ms
+ GET /approvals 200 in 8403ms
+ GET /approvals 200 in 8412ms
+ GET /approvals 200 in 8470ms
+ GET /approvals 200 in 8517ms
+ GET /approvals 200 in 8547ms
+ GET /approvals 200 in 8590ms
+ GET /approvals 200 in 8624ms
+ GET /approvals 200 in 8665ms
+ GET /approvals 200 in 8742ms
+ GET /approvals 200 in 8701ms
+ GET /approvals 200 in 8830ms
+ GET /approvals 200 in 8788ms
+ GET /approvals 200 in 8906ms
+ GET /approvals 200 in 8867ms
+ GET /approvals 200 in 8940ms
+ GET /approvals 200 in 8982ms
+ GET /approvals 200 in 9056ms
+ GET /approvals 200 in 9016ms
+ GET /approvals 200 in 9142ms
+ GET /approvals 200 in 9100ms
+ GET /approvals 200 in 9242ms
+ GET /approvals 200 in 9203ms
+ GET /approvals 200 in 9377ms
+ GET /approvals 200 in 9325ms
+ GET /approvals 200 in 9676ms
+ GET /approvals 200 in 9635ms
+ GET /approvals 200 in 9765ms
+ GET /approvals 200 in 9729ms
+ GET /approvals 200 in 9843ms
+ GET /approvals 200 in 9809ms
+ GET /approvals 200 in 9921ms
+ GET /approvals 200 in 9883ms
+ GET /approvals 200 in 10000ms
+ GET /approvals 200 in 9960ms
+ GET /approvals 200 in 10091ms
+ GET /approvals 200 in 10042ms
+ GET /approvals 200 in 10173ms
+ GET /approvals 200 in 10131ms
+ GET /approvals 200 in 10210ms
+ GET /approvals 200 in 10252ms
+ GET /approvals 200 in 10327ms
+ GET /approvals 200 in 10288ms
+ GET /approvals 200 in 10414ms
+ GET /approvals 200 in 10379ms
+ GET /approvals 200 in 10491ms
+ GET /approvals 200 in 10455ms
+ GET /approvals 200 in 10577ms
+ GET /approvals 200 in 10530ms
+ GET /approvals 200 in 10654ms
+ GET /approvals 200 in 10613ms
+ GET /approvals 200 in 10687ms
+ GET /approvals 200 in 10731ms
+ GET /approvals 200 in 10816ms
+ GET /approvals 200 in 10772ms
+ GET /approvals 200 in 10893ms
+ GET /approvals 200 in 10851ms
+ GET /approvals 200 in 10930ms
+ GET /approvals 200 in 10972ms
+ GET /approvals 200 in 11055ms
+ GET /approvals 200 in 11006ms
+ GET /approvals 200 in 11142ms
+ GET /approvals 200 in 11101ms
+ GET /approvals 200 in 11221ms
+ GET /approvals 200 in 11179ms
+ GET /approvals 200 in 11300ms
+ GET /approvals 200 in 11258ms
+ GET /approvals 200 in 11334ms
+ GET /approvals 200 in 11380ms
+ GET /approvals 200 in 11425ms
+ GET /approvals 200 in 11471ms
+ GET /approvals 200 in 11504ms
+ GET /approvals 200 in 11554ms
+ GET /approvals 200 in 11587ms
+ GET /approvals 200 in 11640ms
+ GET /approvals 200 in 11715ms
+ GET /approvals 200 in 11674ms
+ GET /approvals 200 in 11750ms
+ GET /approvals 200 in 11796ms
+ GET /approvals 200 in 11881ms
+ GET /approvals 200 in 11842ms
+ GET /approvals 200 in 11960ms
+ GET /approvals 200 in 11921ms
+ GET /approvals 200 in 12042ms
+ GET /approvals 200 in 12000ms
+ GET /approvals 200 in 12118ms
+ GET /approvals 200 in 12081ms
+ GET /approvals 200 in 12201ms
+ GET /approvals 200 in 12161ms
+ GET /approvals 200 in 12281ms
+ GET /approvals 200 in 12243ms
+ GET /approvals 200 in 12358ms
+ GET /approvals 200 in 12326ms
+ GET /approvals 200 in 12437ms
+ GET /approvals 200 in 12399ms
+ GET /approvals 200 in 12528ms
+ GET /approvals 200 in 12484ms
+ GET /approvals 200 in 12609ms
+ GET /approvals 200 in 12572ms
+ GET /approvals 200 in 12686ms
+ GET /approvals 200 in 12654ms
+ GET /approvals 200 in 12763ms
+ GET /approvals 200 in 12731ms
+ GET /approvals 200 in 12841ms
+ GET /approvals 200 in 12813ms
+ GET /approvals 200 in 12924ms
+ GET /approvals 200 in 12892ms
+ GET /approvals 200 in 13009ms
+ GET /approvals 200 in 12970ms
+ GET /approvals 200 in 13084ms
+ GET /approvals 200 in 13054ms
+ GET /approvals 200 in 13161ms
+ GET /approvals 200 in 13129ms
+ GET /approvals 200 in 13243ms
+ GET /approvals 200 in 13213ms
+ GET /approvals 200 in 13320ms
+ GET /approvals 200 in 13289ms
+ GET /approvals 200 in 13398ms
+ GET /approvals 200 in 13367ms
+ GET /approvals 200 in 13481ms
+ GET /approvals 200 in 13444ms
+ GET /approvals 200 in 13565ms
+ GET /approvals 200 in 13534ms
+ GET /approvals 200 in 13641ms
+ GET /approvals 200 in 13613ms
+ GET /approvals 200 in 13721ms
+ GET /approvals 200 in 13688ms
+ GET /approvals 200 in 13796ms
+ GET /approvals 200 in 13768ms
+ GET /approvals 200 in 13873ms
+ GET /approvals 200 in 13851ms
+ GET /approvals 200 in 13966ms
+ GET /approvals 200 in 13929ms
+ GET /approvals 200 in 14043ms
+ GET /approvals 200 in 14012ms
+ GET /approvals 200 in 14119ms
+ GET /approvals 200 in 14089ms
+ GET /approvals 200 in 14197ms
+ GET /approvals 200 in 14166ms
+ GET /approvals 200 in 14280ms
+ GET /approvals 200 in 14250ms
+ GET /approvals 200 in 14358ms
+ GET /approvals 200 in 14328ms
+ GET /approvals 200 in 14442ms
+ GET /approvals 200 in 14405ms
+ GET /approvals 200 in 14552ms
+ GET /approvals 200 in 14531ms
+ GET /approvals 200 in 14646ms
+ GET /approvals 200 in 14616ms
+ GET /approvals 200 in 14726ms
+ GET /approvals 200 in 14697ms
+ GET /approvals 200 in 14806ms
+ GET /approvals 200 in 14777ms
+ GET /approvals 200 in 14883ms
+ GET /approvals 200 in 14854ms
+ GET /approvals 200 in 14967ms
+ GET /approvals 200 in 14938ms
+ GET /approvals 200 in 15054ms
+ GET /approvals 200 in 15024ms
+ GET /approvals 200 in 15133ms
+ GET /approvals 200 in 15104ms
+ GET /approvals 200 in 15209ms
+ GET /approvals 200 in 15182ms
+ GET /approvals 200 in 15287ms
+ GET /approvals 200 in 15259ms
+ GET /approvals 200 in 15372ms
+ GET /approvals 200 in 15343ms
+ GET /approvals 200 in 15457ms
+ GET /approvals 200 in 15421ms
+ GET /approvals 200 in 15535ms
+ GET /approvals 200 in 15503ms
+ GET /approvals 200 in 15615ms
+ GET /approvals 200 in 15584ms
+ GET /approvals 200 in 15701ms
+ GET /approvals 200 in 15671ms
+ GET /approvals 200 in 15778ms
+ GET /approvals 200 in 15749ms
+ GET /approvals 200 in 15863ms
+ GET /approvals 200 in 15829ms
+ GET /approvals 200 in 15942ms
+ GET /approvals 200 in 15912ms
+ GET /approvals 200 in 16025ms
+ GET /approvals 200 in 16001ms
+ GET /approvals 200 in 16118ms
+ GET /approvals 200 in 16085ms
+ GET /approvals 200 in 16205ms
+ GET /approvals 200 in 16174ms
+ GET /approvals 200 in 16284ms
+ GET /approvals 200 in 16253ms
+ GET /approvals 200 in 16369ms
+ GET /approvals 200 in 16331ms
+ GET /approvals 200 in 16451ms
+ GET /approvals 200 in 16424ms
+ GET /approvals 200 in 16529ms
+ GET /approvals 200 in 16501ms
+ GET /approvals 200 in 16610ms
+ GET /approvals 200 in 16578ms
+ GET /approvals 200 in 16687ms
+ GET /approvals 200 in 16659ms
+ GET /approvals 200 in 16769ms
+ GET /approvals 200 in 16741ms
+ GET /approvals 200 in 16850ms
+ GET /approvals 200 in 16815ms
+ GET /approvals 200 in 16924ms
+ GET /approvals 200 in 16905ms
+ GET /approvals 200 in 17018ms
+ GET /approvals 200 in 17004ms
+ GET /approvals 200 in 17137ms
+ GET /approvals 200 in 17123ms
+ GET /approvals 200 in 17436ms
+ GET /approvals 200 in 17415ms
+ GET /approvals 200 in 17522ms
+ GET /approvals 200 in 17490ms
+ GET /approvals 200 in 17594ms
+ GET /approvals 200 in 17567ms
+ GET /approvals 200 in 17670ms
+ GET /approvals 200 in 17640ms
+ GET /approvals 200 in 17741ms
+ GET /approvals 200 in 17714ms
+ GET /approvals 200 in 17814ms
+ GET /approvals 200 in 17791ms
+ GET /approvals 200 in 17891ms
+ GET /approvals 200 in 17865ms
+ GET /approvals 200 in 17972ms
+ GET /approvals 200 in 17938ms
+ GET /approvals 200 in 18046ms
+ GET /approvals 200 in 18017ms
+ GET /approvals 200 in 18118ms
+ GET /approvals 200 in 18086ms
+ GET /approvals 200 in 18202ms
+ GET /approvals 200 in 18166ms
+ GET /approvals 200 in 18273ms
+ GET /approvals 200 in 18237ms
+ GET /approvals 200 in 18340ms
+ GET /approvals 200 in 18301ms
+ GET /approvals 200 in 18385ms
+ GET /approvals 200 in 18433ms
+ GET /approvals 200 in 18473ms
+ GET /approvals 200 in 18514ms
+ GET /approvals 200 in 18544ms
+ GET /approvals 200 in 18587ms
+ GET /approvals 200 in 18620ms
+ GET /approvals 200 in 18657ms
+ GET /approvals 200 in 18691ms
+ GET /approvals 200 in 18729ms
+ GET /approvals 200 in 18772ms
+ GET /approvals 200 in 18808ms
+ GET /approvals 200 in 18886ms
+ GET /approvals 200 in 18842ms
+ GET /approvals 200 in 18919ms
+ GET /approvals 200 in 18959ms
+ GET /approvals 200 in 18992ms
+ GET /approvals 200 in 19033ms
+ GET /approvals 200 in 19104ms
+ GET /approvals 200 in 19066ms
+ GET /approvals 200 in 19185ms
+ GET /approvals 200 in 19145ms
+ GET /approvals 200 in 19269ms
+ GET /approvals 200 in 19220ms
+ GET /approvals 200 in 19342ms
+ GET /approvals 200 in 19304ms
+ GET /approvals 200 in 19416ms
+ GET /approvals 200 in 19376ms
+ GET /approvals 200 in 19458ms
+ GET /approvals 200 in 19499ms
+ GET /approvals 200 in 19532ms
+ GET /approvals 200 in 19575ms
+ GET /approvals 200 in 19607ms
+ GET /approvals 200 in 19648ms
+ GET /approvals 200 in 19681ms
+ GET /approvals 200 in 19731ms
+ GET /approvals 200 in 19768ms
+ GET /approvals 200 in 19810ms
+ GET /approvals 200 in 19884ms
+ GET /approvals 200 in 19845ms
+ GET /approvals 200 in 19956ms
+ GET /approvals 200 in 19926ms
+ GET /approvals 200 in 20032ms
+ GET /approvals 200 in 20001ms
+ GET /approvals 200 in 20108ms
+ GET /approvals 200 in 20084ms
+ GET /approvals 200 in 20199ms
+ GET /approvals 200 in 20157ms
+ GET /approvals 200 in 20235ms
+ GET /approvals 200 in 20301ms
+ GET /approvals 200 in 20330ms
+ GET /approvals 200 in 20446ms
+ GET /approvals 200 in 20471ms
+ GET /approvals 200 in 20600ms
+ GET /approvals 200 in 20632ms
+ GET /approvals 200 in 20681ms
+ GET /approvals 200 in 20704ms
+ GET /approvals 200 in 20755ms
+ GET /approvals 200 in 20778ms
+ GET /approvals 200 in 20837ms
+ GET /approvals 200 in 20861ms
+ GET /approvals 200 in 20912ms
+ GET /approvals 200 in 20944ms
+ GET /approvals 200 in 20993ms
+ GET /approvals 200 in 21016ms
+ GET /approvals 200 in 21064ms
+ GET /approvals 200 in 21090ms
+ GET /approvals 200 in 21129ms
+ GET /approvals 200 in 21170ms
+ GET /approvals 200 in 21209ms
+ GET /approvals 200 in 21251ms
+ GET /approvals 200 in 21288ms
+ GET /approvals 200 in 21336ms
+ GET /approvals 200 in 21376ms
+ GET /approvals 200 in 21415ms
+ GET /approvals 200 in 21453ms
+ GET /approvals 200 in 21492ms
+ GET /approvals 200 in 21531ms
+ GET /approvals 200 in 21577ms
+ GET /approvals 200 in 21621ms
+ GET /approvals 200 in 21673ms
+ GET /approvals 200 in 21727ms
+ GET /health 404 in 34ms
+ ✓ Compiled /tasks in 181ms (955 modules)
+ ✓ Compiled in 124ms (569 modules)
+ GET /tasks 200 in 249ms
+ GET /tasks 200 in 387ms
+ GET /tasks 200 in 442ms
+ GET /tasks 200 in 496ms
+ GET /tasks 200 in 540ms
+ GET /tasks 200 in 588ms
+ GET /tasks 200 in 632ms
+ GET /tasks 200 in 677ms
+ GET /tasks 200 in 717ms
+ GET /tasks 200 in 758ms
+ GET /tasks 200 in 805ms
+ GET /tasks 200 in 847ms
+ GET /tasks 200 in 886ms
+ GET /tasks 200 in 928ms
+ GET /tasks 200 in 970ms
+ GET /tasks 200 in 1019ms
+ GET /tasks 200 in 1061ms
+ GET /tasks 200 in 1102ms
+ GET /tasks 200 in 1143ms
+ GET /tasks 200 in 1185ms
+ GET /tasks 200 in 1225ms
+ GET /tasks 200 in 1267ms
+ GET /tasks 200 in 1306ms
+ GET /tasks 200 in 1346ms
+ GET /tasks 200 in 1438ms
+ GET /tasks 200 in 1482ms
+ GET /tasks 200 in 1527ms
+ GET /tasks 200 in 1571ms
+ GET /tasks 200 in 1617ms
+ GET /tasks 200 in 1668ms
+ GET /tasks 200 in 1709ms
+ GET /tasks 200 in 1749ms
+ GET /tasks 200 in 1796ms
+ GET /tasks 200 in 1836ms
+ GET /tasks 200 in 1878ms
+ GET /tasks 200 in 1918ms
+ GET /tasks 200 in 1958ms
+ GET /tasks 200 in 1998ms
+ GET /tasks 200 in 2039ms
+ GET /tasks 200 in 2085ms
+ GET /tasks 200 in 2135ms
+ GET /tasks 200 in 2184ms
+ GET /tasks 200 in 2225ms
+ GET /tasks 200 in 2267ms
+ GET /tasks 200 in 2310ms
+ GET /tasks 200 in 2352ms
+ GET /tasks 200 in 2394ms
+ GET /tasks 200 in 2436ms
+ GET /tasks 200 in 2479ms
+ GET /tasks 200 in 2529ms
+ GET /tasks 200 in 2573ms
+ GET /tasks 200 in 2621ms
+ GET /tasks 200 in 2662ms
+ GET /tasks 200 in 2705ms
+ GET /tasks 200 in 2745ms
+ GET /tasks 200 in 2787ms
+ GET /tasks 200 in 2827ms
+ GET /tasks 200 in 2867ms
+ GET /tasks 200 in 2914ms
+ GET /tasks 200 in 2954ms
+ GET /tasks 200 in 2994ms
+ GET /tasks 200 in 3035ms
+ GET /tasks 200 in 3085ms
+ GET /tasks 200 in 3128ms
+ GET /tasks 200 in 3170ms
+ GET /tasks 200 in 3213ms
+ GET /tasks 200 in 3264ms
+ GET /tasks 200 in 3321ms
+ GET /tasks 200 in 3372ms
+ GET /tasks 200 in 3427ms
+ GET /tasks 200 in 3477ms
+ GET /tasks 200 in 3524ms
+ GET /tasks 200 in 3572ms
+ GET /tasks 200 in 3627ms
+ GET /tasks 200 in 3671ms
+ GET /tasks 200 in 3725ms
+ GET /tasks 200 in 3772ms
+ GET /tasks 200 in 3819ms
+ GET /tasks 200 in 3865ms
+ GET /tasks 200 in 3910ms
+ GET /tasks 200 in 3955ms
+ GET /tasks 200 in 4000ms
+ GET /tasks 200 in 4045ms
+ GET /tasks 200 in 4097ms
+ GET /tasks 200 in 4153ms
+ GET /tasks 200 in 4203ms
+ GET /tasks 200 in 4254ms
+ GET /tasks 200 in 4312ms
+ GET /tasks 200 in 4361ms
+ GET /tasks 200 in 4501ms
+ GET /tasks 200 in 4547ms
+ GET /tasks 200 in 4594ms
+ GET /tasks 200 in 4639ms
+ GET /tasks 200 in 4683ms
+ GET /tasks 200 in 4743ms
+ GET /tasks 200 in 4807ms
+ GET /tasks 200 in 4879ms
+ GET /tasks 200 in 4929ms
+ GET /tasks 200 in 5010ms
+ GET /tasks 200 in 5112ms
+ ✓ Compiled /memory in 278ms (957 modules)
+ GET /tasks 200 in 5267ms
+ GET /memory 200 in 399ms
+ GET /tasks 200 in 5341ms
+ GET /tasks 200 in 5393ms
+ GET /tasks 200 in 5443ms
+ GET /tasks 200 in 5499ms
+ GET /tasks 200 in 5548ms
+ GET /tasks 200 in 5599ms
+ GET /tasks 200 in 5649ms
+ GET /tasks 200 in 5721ms
+ GET /tasks 200 in 5773ms
+ GET /tasks 200 in 5826ms
+ GET /tasks 200 in 5920ms
+ GET /tasks 200 in 6158ms
+[?25h
+
+> secretary-os@0.1.0 start:dashboard /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/dashboard dev
+
+
+> @secretaryos/dashboard@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/dashboard
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://169.254.227.144:3000
+
+ ✓ Starting...
+ ✓ Ready in 1181ms
+[?25h
+
+> secretary-os@0.1.0 start:dashboard /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/dashboard dev
+
+
+> @secretaryos/dashboard@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/dashboard
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://169.254.227.144:3000
+
+ ✓ Starting...
+ ✓ Ready in 1085ms
+ ○ Compiling /memory ...
+ ✓ Compiled /memory in 1735ms (631 modules)
+ GET /memory 200 in 1985ms
+ ✓ Compiled /personas in 209ms (609 modules)
+ GET /personas 200 in 299ms
+ ✓ Compiled / in 134ms (612 modules)
+ GET / 200 in 205ms
+ GET /personas 200 in 30ms
+ GET / 200 in 30ms
+ ✓ Compiled /prompts in 161ms (614 modules)
+ GET /prompts 200 in 210ms
+ ✓ Compiled /improvement in 164ms (616 modules)
+ GET /improvement 200 in 217ms
+ GET / 200 in 39ms
+ ✓ Compiled in 211ms (616 modules)
+ GET / 200 in 48ms
+ GET / 200 in 86ms
+ ✓ Compiled in 236ms (616 modules)
+ GET / 200 in 71ms
+ ✓ Compiled in 252ms (616 modules)
+ ✓ Compiled in 170ms (630 modules)
+ GET / 200 in 44ms
+ ✓ Compiled in 126ms (616 modules)
+ GET / 200 in 71ms
+ ✓ Compiled in 126ms (630 modules)
+ GET / 200 in 66ms
+ ✓ Compiled in 144ms (616 modules)
+ GET / 200 in 52ms
+ ✓ Compiled in 154ms (616 modules)
+ GET / 200 in 59ms
+ ✓ Compiled in 122ms (630 modules)
+ GET / 200 in 42ms
+ ✓ Compiled in 142ms (616 modules)
+ GET / 200 in 40ms
+ GET / 200 in 45ms
+ ✓ Compiled in 160ms (616 modules)
+ GET / 200 in 47ms
+ ✓ Compiled in 166ms (616 modules)
+ ✓ Compiled in 102ms (630 modules)
+ GET / 200 in 42ms
+[?25h
+
+> secretary-os@0.1.0 start:dashboard /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/dashboard dev
+
+
+> @secretaryos/dashboard@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/dashboard
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://169.254.227.144:3000
+
+ ✓ Starting...
+ ✓ Ready in 1193ms
+ ○ Compiling / ...
+ ✓ Compiled / in 523ms (600 modules)
+ GET / 200 in 807ms
+ ✓ Compiled /chat in 287ms (610 modules)
+ GET /chat 200 in 375ms
+ ✓ Compiled /tasks in 168ms (612 modules)
+ GET /tasks 200 in 218ms
+ GET / 200 in 41ms
+ GET /chat 200 in 20ms
+ GET /tasks 200 in 27ms
+ GET /chat 200 in 21ms
+ ✓ Compiled /approvals in 203ms (614 modules)
+ GET /approvals 200 in 298ms
+ ✓ Compiled /memory in 201ms (616 modules)
+ GET /memory 200 in 268ms
+ ✓ Compiled /personas in 155ms (624 modules)
+ GET /personas 200 in 218ms
+ GET /chat 200 in 35ms
+ ✓ Compiled in 210ms (621 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ ReferenceError: isPending is not defined
+    at ChatInterface (src/components/chat-interface.tsx:276:25)
+  274 |               rows={4}
+  275 |               placeholder="Ask SecretaryOS something..."
+> 276 |               disabled={isPending}
+      |                         ^
+  277 |               required
+  278 |             />
+  279 |             <button type="submit" disabled={isPending || !selectedSessionId}> {
+  digest: '3924533789'
+}
+ GET /chat 500 in 166ms
+ ✓ Compiled in 148ms (621 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ ReferenceError: isPending is not defined
+    at ChatInterface (src/components/chat-interface.tsx:279:25)
+  277 |               rows={4}
+  278 |               placeholder="Ask SecretaryOS something..."
+> 279 |               disabled={isPending}
+      |                         ^
+  280 |               required
+  281 |             />
+  282 |             <button type="submit" disabled={isPending || !selectedSessionId}> {
+  digest: '3924533789'
+}
+ GET /chat 500 in 148ms
+ ✓ Compiled in 126ms (621 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /chat 200 in 143ms
+[?25h
+
+> secretary-os@0.1.0 start:dashboard /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/dashboard dev
+
+
+> @secretaryos/dashboard@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/dashboard
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://169.254.227.144:3000
+
+ ✓ Starting...
+ ✓ Ready in 1111ms
+ ○ Compiling /chat ...
+ ✓ Compiled /chat in 504ms (603 modules)
+ GET /chat 200 in 777ms
+ GET /chat 200 in 58ms
+ ✓ Compiled / in 311ms (610 modules)
+ GET / 200 in 418ms
+ GET /chat 200 in 33ms
+ GET / 200 in 28ms
+ GET / 200 in 38ms
+ GET /chat 200 in 19ms
+ GET / 200 in 141ms
+ GET /chat 200 in 25ms
+ GET /chat 200 in 57ms
+ GET /chat 200 in 57ms
+ ✓ Compiled in 228ms (610 modules)
+ ✓ Compiled in 147ms (610 modules)
+[?25h
+
+> secretary-os@0.1.0 start:dashboard /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/dashboard dev
+
+
+> @secretaryos/dashboard@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/dashboard
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://169.254.227.144:3000
+
+ ✓ Starting...
+ ✓ Ready in 1216ms
+ ✓ Compiled / in 480ms (600 modules)
+ GET / 200 in 774ms
+ ✓ Compiled /chat in 182ms (610 modules)
+ GET /chat 200 in 274ms
+ ✓ Compiled in 167ms (610 modules)
+[?25h
+
+> secretary-os@0.1.0 start:dashboard /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/dashboard dev
+
+
+> @secretaryos/dashboard@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/dashboard
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://169.254.227.144:3000
+
+ ✓ Starting...
+ ✓ Ready in 1121ms
+ ✓ Compiled /chat in 465ms (603 modules)
+ GET /chat 200 in 733ms
+[?25h

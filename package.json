@@ -1,0 +1,41 @@
+{
+  "name": "secretary-os",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint && biome check .",
+    "typecheck": "turbo typecheck",
+    "format": "biome format --write .",
+    "check:format": "biome format --check .",
+    "configure": "tsx infra/scripts/configure.ts",
+    "setup:services": "tsx infra/scripts/bootstrap-services.ts",
+    "onboard": "tsx infra/scripts/setup.ts",
+    "start:api": "pnpm --filter @secretaryos/api dev",
+    "start:worker": "pnpm --filter @secretaryos/worker dev",
+    "start:dashboard": "pnpm --filter @secretaryos/dashboard dev",
+    "start:gateway": "pnpm --filter @secretaryos/gateway-discord dev",
+    "start:backend": "turbo run dev --filter=@secretaryos/api --filter=@secretaryos/worker",
+    "start:all": "tsx infra/scripts/service-manager.ts start",
+    "start:core": "tsx infra/scripts/service-manager.ts start-core",
+    "stop:all": "tsx infra/scripts/service-manager.ts stop",
+    "status:all": "tsx infra/scripts/service-manager.ts status",
+    "reset:local": "tsx infra/scripts/reset-local.ts",
+    "db:generate": "pnpm --filter @secretaryos/db db:generate",
+    "db:migrate": "pnpm --filter @secretaryos/db db:migrate",
+    "docker:up": "docker compose -f infra/docker/compose.yaml up -d",
+    "docker:down": "docker compose -f infra/docker/compose.yaml down"
+  },
+  "devDependencies": {
+    "@secretaryos/settings": "workspace:*",
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^24.0.0",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.30.6",
+    "tsx": "^4.19.2",
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.0"
+  }
+}

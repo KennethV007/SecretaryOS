@@ -1,0 +1,25 @@
+{
+  "name": "@secretaryos/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/main.ts",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "tsx --test src/**/*.test.ts"
+  },
+  "dependencies": {
+    "bullmq": "^5.61.2",
+    "@secretaryos/codex-runtime": "workspace:*",
+    "@secretaryos/core": "workspace:*",
+    "@secretaryos/events": "workspace:*",
+    "@secretaryos/memory": "workspace:*",
+    "@secretaryos/orchestrator": "workspace:*",
+    "@secretaryos/policy": "workspace:*",
+    "@secretaryos/skills": "workspace:*",
+    "ioredis": "^5.8.0",
+    "zod": "^4.1.12"
+  }
+}

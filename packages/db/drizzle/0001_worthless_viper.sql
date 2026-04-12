@@ -1,0 +1,3 @@
+-- no-op migration
+-- The self-improvement schema objects were consolidated into 0000_grey_plazm.sql
+-- during bootstrap. This file remains so existing migration journals stay valid.

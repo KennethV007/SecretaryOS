@@ -1,0 +1,16 @@
+node_modules
+.turbo
+.next
+**/.turbo
+**/.next
+dist
+coverage
+.env
+config/settings.json
+.DS_Store
+data/task-artifacts/*
+!data/task-artifacts/.gitkeep
+data/imports/*
+!data/imports/.gitkeep
+data/persona-packs/*
+!data/persona-packs/.gitkeep
