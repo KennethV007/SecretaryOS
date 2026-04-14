@@ -1,5 +1,12 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdtempSync, readFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -9,6 +16,7 @@ import {
   SecretaryOrchestrator,
   createInMemoryRuntimeState,
 } from "@secretaryos/orchestrator";
+import { getManagedCodexPackInstallPath } from "@secretaryos/skills";
 
 import { buildApiApp } from "./app.js";
 import { loadApiConfig } from "./config.js";
@@ -236,6 +244,148 @@ test("skills and session message routes are exposed", async () => {
   assert.ok(Array.isArray(messagesResponse.json().items));
 
   await app.close();
+});
+
+test("memory route supports kind, scope, and source filters", async () => {
+  const runtime = new SecretaryOrchestrator(createInMemoryRuntimeState());
+  const session = runtime.createSession({
+    channel: "dashboard",
+    channelSessionKey: "memory-filter-route",
+    userName: "Local User",
+  });
+  const task = await runtime.createTask({
+    sessionId: session.id,
+    channel: "dashboard",
+    content: "Remember my preference for terse replies.",
+  });
+
+  runtime.recordMemoryWrite({
+    kind: "memory.write",
+    taskId: task.task.id,
+    content: "Remember my preference for terse replies.",
+    memoryKind: "preference",
+    scope: "global",
+    requestedAt: new Date().toISOString(),
+  });
+  runtime.recordMemoryWrite({
+    kind: "memory.write",
+    taskId: task.task.id,
+    content: "Project note: use pnpm in this repository.",
+    memoryKind: "project",
+    scope: "project",
+    requestedAt: new Date().toISOString(),
+  });
+
+  const app = buildApiApp({
+    config: loadApiConfig(testEnv),
+    runtime,
+  });
+
+  const preferenceResponse = await app.inject({
+    method: "GET",
+    url: "/memory?kind=preference&scope=global&source=codex_task",
+  });
+
+  assert.equal(preferenceResponse.statusCode, 200);
+  assert.equal(preferenceResponse.json().items.length, 1);
+  assert.equal(preferenceResponse.json().items[0]?.kind, "preference");
+
+  const projectResponse = await app.inject({
+    method: "GET",
+    url: "/memory?kind=project&scope=project",
+  });
+
+  assert.equal(projectResponse.statusCode, 200);
+  assert.equal(projectResponse.json().items.length, 1);
+  assert.equal(projectResponse.json().items[0]?.kind, "project");
+
+  await app.close();
+});
+
+test("skill import routes install packs into the live Codex skill root", async () => {
+  const workspace = mkdtempSync(join(tmpdir(), "secretary-skill-api-"));
+  const skillPackRoot = join(workspace, "skill-packs");
+  const codexSkillRoot = join(workspace, ".codex", "skills");
+  const sourceDir = join(workspace, "source-pack");
+
+  mkdirSync(join(sourceDir, "repo-helper"), {
+    recursive: true,
+  });
+  writeFileSync(
+    join(sourceDir, "skill-pack.json"),
+    JSON.stringify(
+      {
+        id: "workspace-pack",
+        name: "Workspace Pack",
+        skills: [
+          {
+            id: "repo-helper",
+            summary: "Repository helper.",
+            approvalClass: 0,
+          },
+        ],
+      },
+      null,
+      2,
+    ),
+  );
+  writeFileSync(
+    join(sourceDir, "repo-helper", "SKILL.md"),
+    "# repo-helper\nRepository helper.\n",
+  );
+
+  const app = buildApiApp({
+    config: loadApiConfig({
+      ...testEnv,
+      SKILL_PACK_ROOT: skillPackRoot,
+      CODEX_SKILL_ROOT: codexSkillRoot,
+    }),
+  });
+
+  const importResponse = await app.inject({
+    method: "POST",
+    url: "/skills/import",
+    payload: {
+      sourceDir,
+    },
+  });
+
+  assert.equal(importResponse.statusCode, 201);
+  assert.equal(importResponse.json().installed, true);
+  assert.deepEqual(importResponse.json().liveSkillIds, ["repo-helper"]);
+  assert.equal(
+    importResponse.json().installedPath,
+    getManagedCodexPackInstallPath("workspace-pack", codexSkillRoot),
+  );
+
+  const packsResponse = await app.inject({
+    method: "GET",
+    url: "/skills/packs",
+  });
+
+  assert.equal(packsResponse.statusCode, 200);
+  assert.equal(packsResponse.json().items[0]?.installed, true);
+  assert.deepEqual(packsResponse.json().items[0]?.liveSkillIds, [
+    "repo-helper",
+  ]);
+
+  const skillsResponse = await app.inject({
+    method: "GET",
+    url: "/skills",
+  });
+
+  assert.equal(skillsResponse.statusCode, 200);
+  assert.ok(
+    skillsResponse
+      .json()
+      .items.some((skill: { id: string }) => skill.id === "repo-helper"),
+  );
+
+  await app.close();
+  rmSync(workspace, {
+    recursive: true,
+    force: true,
+  });
 });
 
 test("persona creation route writes a persona pack into the configured root", async () => {

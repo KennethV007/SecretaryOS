@@ -42,14 +42,24 @@ type UsageSummary = {
 export type SkillDefinition = {
   id: string;
   summary: string;
-  approvalClass: number;
+  approvalClass: number | null;
+  source: "secretaryos_builtin" | "codex_system" | "codex_home";
+  executor: "secretaryos" | "codex";
+  path?: string;
 };
 
 export type SkillPackManifest = {
   id: string;
   name: string;
   summary?: string;
-  skills: SkillDefinition[];
+  skills: Array<Pick<SkillDefinition, "id" | "summary" | "approvalClass">>;
+};
+
+export type ImportedSkillPackRecord = SkillPackManifest & {
+  catalogPath: string;
+  installed: boolean;
+  installedPath?: string;
+  liveSkillIds: string[];
 };
 
 const apiBaseUrl =
@@ -215,8 +225,8 @@ export async function getSkills(): Promise<SkillDefinition[]> {
   return response.items;
 }
 
-export async function getSkillPacks(): Promise<SkillPackManifest[]> {
-  const response = await fetchJson<ListResponse<SkillPackManifest>>(
+export async function getSkillPacks(): Promise<ImportedSkillPackRecord[]> {
+  const response = await fetchJson<ListResponse<ImportedSkillPackRecord>>(
     "/skills/packs",
     {
       items: [],
@@ -228,7 +238,7 @@ export async function getSkillPacks(): Promise<SkillPackManifest[]> {
 
 export async function importSkillPack(
   sourceDir: string,
-): Promise<SkillPackManifest> {
+): Promise<ImportedSkillPackRecord> {
   const response = await fetch(`${apiBaseUrl}/skills/import`, {
     method: "POST",
     headers: {
@@ -242,7 +252,7 @@ export async function importSkillPack(
     throw new Error(message || "Failed to import skill pack.");
   }
 
-  return (await response.json()) as SkillPackManifest;
+  return (await response.json()) as ImportedSkillPackRecord;
 }
 
 export async function getMemoryItems(): Promise<MemoryRecord[]> {

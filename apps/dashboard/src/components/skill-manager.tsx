@@ -2,7 +2,10 @@
 
 import { useState, useTransition } from "react";
 
-import type { SkillDefinition, SkillPackManifest } from "../lib/dashboard-api";
+import type {
+  ImportedSkillPackRecord,
+  SkillDefinition,
+} from "../lib/dashboard-api";
 import { importSkillPack } from "../lib/dashboard-api";
 
 export function SkillManager({
@@ -10,11 +13,26 @@ export function SkillManager({
   packs,
 }: {
   skills: SkillDefinition[];
-  packs: SkillPackManifest[];
+  packs: ImportedSkillPackRecord[];
 }) {
   const [localPacks, setLocalPacks] = useState(packs);
   const [status, setStatus] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function describeSkill(skill: SkillDefinition): string {
+    const source =
+      skill.source === "secretaryos_builtin"
+        ? "SecretaryOS"
+        : skill.source === "codex_system"
+          ? "Codex system"
+          : "Codex installed";
+    const approval =
+      skill.approvalClass === null
+        ? "policy n/a"
+        : `class ${skill.approvalClass}`;
+
+    return `${source} · ${skill.executor} · ${approval}`;
+  }
 
   return (
     <section className="panel">
@@ -22,7 +40,8 @@ export function SkillManager({
         <div>
           <h2>Skills</h2>
           <p>
-            Built-in filesystem and repo skills plus imported Codex skill packs.
+            Built-in SecretaryOS skills, Codex system skills, and imported packs
+            that can be installed live into Codex.
           </p>
         </div>
       </div>
@@ -46,7 +65,9 @@ export function SkillManager({
                 pack,
                 ...current.filter((entry) => entry.id !== pack.id),
               ]);
-              setStatus(`Imported ${pack.name}.`);
+              setStatus(
+                `Imported ${pack.name} and installed it into the live Codex skill root.`,
+              );
             } catch (error) {
               setStatus(
                 error instanceof Error
@@ -71,13 +92,13 @@ export function SkillManager({
 
       <div className="section-grid">
         <div className="panel">
-          <h3>Built-in skills</h3>
+          <h3>Available skills</h3>
           <div className="chat-session-list">
             {skills.map((skill) => (
               <div key={skill.id} className="chat-session-item">
                 <strong>{skill.id}</strong>
                 <span>
-                  class {skill.approvalClass} · {skill.summary}
+                  {describeSkill(skill)} · {skill.summary}
                 </span>
               </div>
             ))}
@@ -97,6 +118,14 @@ export function SkillManager({
                     {pack.id} · {pack.skills.length} skill
                     {pack.skills.length === 1 ? "" : "s"}
                   </span>
+                  <span>
+                    {pack.installed
+                      ? `live in Codex · ${pack.liveSkillIds.join(", ") || "no discovered skills"}`
+                      : "catalog only"}
+                  </span>
+                  {pack.installedPath ? (
+                    <span>{pack.installedPath}</span>
+                  ) : null}
                 </div>
               ))
             )}

@@ -402,7 +402,8 @@ a {
 }
 
 .chat-form textarea,
-.chat-form input {
+.chat-form input,
+.chat-form select {
   width: 100%;
   padding: 0.95rem 1rem;
   border: 1px solid var(--line);
@@ -414,6 +415,47 @@ a {
 
 .chat-form textarea {
   resize: vertical;
+}
+
+.memory-toolbar {
+  display: grid;
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.memory-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.8rem;
+}
+
+.memory-filter {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.memory-filter span {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.memory-filter input,
+.memory-filter select {
+  width: 100%;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+  font: inherit;
+}
+
+.memory-summary {
+  margin: 0;
+  color: var(--muted);
 }
 
 .chat-form button {

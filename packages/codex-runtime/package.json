@@ -16,6 +16,7 @@
     "@secretaryos/core": "workspace:*",
     "@secretaryos/personas": "workspace:*",
     "@secretaryos/prompts": "workspace:*",
-    "@secretaryos/settings": "workspace:*"
+    "@secretaryos/settings": "workspace:*",
+    "@secretaryos/skills": "workspace:*"
   }
 }

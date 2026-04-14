@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -142,6 +142,32 @@ test("buildRuntimePrompt includes task context", () => {
   assert.match(prompt, /Persona: Secretary Default \(secretary-default\)/);
   assert.match(prompt, /Project: project_alpha/);
   assert.match(prompt, /Use the watered-down persona prompt/);
+});
+
+test("buildRuntimePrompt includes the unified skill registry", () => {
+  const rootDir = mkdtempSync(join(tmpdir(), "secretary-runtime-skills-"));
+  const codexSkillDir = join(rootDir, ".codex", "skills", "repo-helper");
+
+  try {
+    mkdirSync(codexSkillDir, {
+      recursive: true,
+    });
+    writeFileSync(
+      join(codexSkillDir, "SKILL.md"),
+      "# repo-helper\nRepository helper skill.\n",
+      "utf8",
+    );
+
+    const prompt = buildRuntimePrompt(createTask(), {
+      HOME: rootDir,
+    });
+
+    assert.match(prompt, /Available skills registry:/);
+    assert.match(prompt, /filesystem\.list/);
+    assert.match(prompt, /repo-helper/);
+  } finally {
+    rmSync(rootDir, { recursive: true, force: true });
+  }
 });
 
 test("CodexMcpExecutor maps response output and usage", async () => {

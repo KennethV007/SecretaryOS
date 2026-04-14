@@ -65,7 +65,9 @@ export type RuntimeStats = {
 
 export type MemoryQuery = {
   text?: string;
+  kind?: MemoryRecord["kind"];
   scope?: MemoryScope;
+  source?: MemoryRecord["source"];
   projectId?: string;
   personaId?: string;
   limit?: number;
@@ -231,6 +233,44 @@ function sortByMostRecent<
 
     return rightValue.localeCompare(leftValue);
   });
+}
+
+function inferMemoryKind(
+  content: string,
+  task?: TaskRecord,
+): MemoryRecord["kind"] {
+  const normalized = content.toLowerCase();
+
+  if (
+    /\bpreference\b/.test(normalized) ||
+    /\bi prefer\b/.test(normalized) ||
+    /\bcall me\b/.test(normalized) ||
+    /\bmy favorite\b/.test(normalized)
+  ) {
+    return "preference";
+  }
+
+  if (
+    /^project note:/i.test(content) ||
+    /^project:/i.test(content) ||
+    /^repo note:/i.test(content)
+  ) {
+    return "project";
+  }
+
+  if (
+    /^reminder:/i.test(content) ||
+    /^remember to\b/i.test(content) ||
+    /^follow up\b/i.test(content)
+  ) {
+    return "event";
+  }
+
+  if (task?.mode === "after_hours") {
+    return "conversation";
+  }
+
+  return "task";
 }
 
 export class SecretaryOrchestrator {
@@ -763,7 +803,7 @@ export class SecretaryOrchestrator {
     const task = this.state.tasks.get(job.taskId);
     const memory: MemoryRecord = {
       id: createId("memory"),
-      kind: task?.mode === "after_hours" ? "conversation" : "task",
+      kind: job.memoryKind ?? inferMemoryKind(job.content, task),
       scope: job.scope,
       source: "codex_task",
       content: job.content,
@@ -783,7 +823,15 @@ export class SecretaryOrchestrator {
     const normalizedText = query.text?.trim().toLowerCase();
     const filtered = Array.from(this.state.memories.values()).filter(
       (memory) => {
+        if (query.kind && memory.kind !== query.kind) {
+          return false;
+        }
+
         if (query.scope && memory.scope !== query.scope) {
+          return false;
+        }
+
+        if (query.source && memory.source !== query.source) {
           return false;
         }
 

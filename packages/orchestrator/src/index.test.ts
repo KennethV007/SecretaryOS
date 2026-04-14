@@ -70,6 +70,58 @@ test("after-hours memory writes stay in the isolated scope", async () => {
   assert.equal(runtime.listMemory({ scope: "global" }).length, 0);
 });
 
+test("preference memory writes are typed as durable preferences", async () => {
+  const runtime = new SecretaryOrchestrator(createInMemoryRuntimeState());
+  const session = runtime.createSession({
+    channel: "dashboard",
+    channelSessionKey: "memory-preference",
+    userName: "Local User",
+  });
+  const task = await runtime.createTask({
+    sessionId: session.id,
+    channel: "dashboard",
+    content: "Remember my preference for terse replies.",
+  });
+
+  const memory = runtime.recordMemoryWrite({
+    kind: "memory.write",
+    taskId: task.task.id,
+    content: "Remember my preference for terse replies.",
+    memoryKind: "preference",
+    scope: "global",
+    requestedAt: new Date().toISOString(),
+  });
+
+  assert.equal(memory.kind, "preference");
+});
+
+test("project memory writes preserve explicit structured kinds", async () => {
+  const runtime = new SecretaryOrchestrator(createInMemoryRuntimeState());
+  const session = runtime.createSession({
+    channel: "dashboard",
+    channelSessionKey: "memory-project",
+    userName: "Local User",
+  });
+  const task = await runtime.createTask({
+    sessionId: session.id,
+    channel: "dashboard",
+    content: "Project note: use pnpm in this repository.",
+  });
+
+  const memory = runtime.recordMemoryWrite({
+    kind: "memory.write",
+    taskId: task.task.id,
+    content: "Project note: use pnpm in this repository.",
+    memoryKind: "project",
+    scope: "project",
+    requestedAt: new Date().toISOString(),
+  });
+
+  assert.equal(memory.kind, "project");
+  assert.equal(runtime.listMemory({ kind: "project" }).length, 1);
+  assert.equal(runtime.listMemory({ kind: "preference" }).length, 0);
+});
+
 test("global active persona persists and becomes the default for new tasks", async () => {
   const personaPackRoot = mkdtempSync(join(tmpdir(), "secretary-personas-"));
   const activePersonaStorePath = join(personaPackRoot, "active-character.json");

@@ -58,6 +58,7 @@ Optional service-specific values:
 
 - `CODEX_MCP_COMMAND`
 - `CODEX_MCP_ARGS`
+- `CODEX_SKILL_ROOT`
 - `CODEX_DEFAULT_MODEL`
 - `CODEX_ASSISTANT_MODEL`
 - `CODEX_PLANNER_MODEL`
@@ -109,6 +110,7 @@ Background runtime details:
 
 - PID state file: `.runtime/services.json`
 - Logs: `.runtime/logs/*.log`
+- The detached runner now prunes stale PIDs before start and status checks, and `stop:all` tears down the full detached process group instead of only the parent pid.
 - The Discord gateway is skipped by `pnpm start:all` if `DISCORD_BOT_TOKEN` or `DISCORD_CLIENT_ID` is missing.
 
 ## Codex Runtime
@@ -119,6 +121,7 @@ Recommended defaults on this machine:
 
 - `CODEX_MCP_COMMAND=/opt/homebrew/bin/codex`
 - `CODEX_MCP_ARGS=exec --skip-git-repo-check --color never -m {model}`
+- `CODEX_SKILL_ROOT` is optional. If omitted, SecretaryOS uses `$CODEX_HOME/skills` or `~/.codex/skills`.
 
 How it works:
 
@@ -141,6 +144,22 @@ OpenRouter is now routed through the Codex CLI's custom-provider path.
 
 This keeps Codex as the execution surface while allowing an external Responses-compatible provider path.
 
+## Skills
+
+SecretaryOS now has one merged live skill registry:
+
+- built-in SecretaryOS skills from `packages/skills`
+- Codex system skills from the Codex install
+- user-installed Codex skills from `CODEX_SKILL_ROOT`
+
+Dashboard skill imports are no longer catalog-only. Importing a pack through the API or dashboard:
+
+- copies the pack into the repo catalog under `data/skills/`
+- installs the same pack into the live Codex skill root under `secretaryos-imports/<pack-id>`
+- makes the discovered `SKILL.md` entries show up in `/skills` without manual copying
+
+If you want SecretaryOS to use a non-default Codex skill directory, set `CODEX_SKILL_ROOT` in `.env`.
+
 ## Redis
 
 Redis is local by default. There is no hosted-account field in the default setup because the repo expects the Docker service from `infra/docker/compose.yaml`.
@@ -153,8 +172,8 @@ If you want a hosted Redis later, replace `REDIS_URL` in `.env` with your provid
 
 Port collision behavior:
 
-- If `5432` is already occupied, `pnpm setup` automatically moves SecretaryOS Postgres to the next free port and rewrites `DATABASE_URL`.
-- If `6379` is already occupied, `pnpm setup` automatically moves SecretaryOS Redis to the next free port and rewrites `REDIS_URL`.
+- If `5432` is already occupied, `pnpm onboard` automatically moves SecretaryOS Postgres to the next free port and rewrites `DATABASE_URL`.
+- If `6379` is already occupied, `pnpm onboard` automatically moves SecretaryOS Redis to the next free port and rewrites `REDIS_URL`.
 - The Docker Compose file uses `POSTGRES_HOST_PORT` and `REDIS_HOST_PORT` from `.env`, so the container ports stay stable even if the host ports move.
 - The API listens on `3001` by default and the dashboard listens on `3000` by default.
 
@@ -215,6 +234,8 @@ Run these after changes:
 - Database migration application requires a running local Postgres instance.
 - Persona packs are file-backed and live under `data/persona-packs/` by default. The dashboard can create new packs, upload profile/gallery images, and store the character definition markdown alongside the prompt files.
 - The globally active Discord character is persisted separately in `data/active-character.json` by default, and `/character` switches that file as well as the bot profile.
+- Chat history and durable memory are separate. Session transcripts stay under session/message APIs, while the Memory tab is reserved for promoted durable items such as preferences, project notes, reminders, and other scoped facts.
+- The Memory page now supports filtering durable memory by kind, scope, source, and text.
 - `pnpm onboard` performs first-run checks, starts Docker if available, bootstraps local Python services, ensures `config/settings.json` exists, and launches the interactive settings flow.
 - `pnpm configure` now attempts interactive prompts by default and falls back to binding `/dev/tty` automatically when `stdin` and `stdout` do not present as TTYs.
 - If the setup flow is run from a truly non-interactive shell with no usable terminal, it will keep the current settings and print a notice instead of prompting.

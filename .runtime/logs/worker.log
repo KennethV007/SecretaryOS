@@ -28794,3 +28794,35 @@ Exit status 143
  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @secretaryos/worker@0.1.0 dev: `tsx src/main.ts`
 Exit status 143
  ELIFECYCLE  Command failed with exit code 143.
+
+> secretary-os@0.1.0 start:worker /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/worker dev
+
+
+> @secretaryos/worker@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/worker
+> tsx src/main.ts
+
+[worker] completed job 7
+[worker] completed job 8
+[worker] completed job 9
+[worker] completed job 10
+[worker] completed job 11
+[worker] completed job 12
+/Users/macstudio/Desktop/Projects/Secretary OS/apps/worker:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @secretaryos/worker@0.1.0 dev: `tsx src/main.ts`
+Exit status 143
+ ELIFECYCLE  Command failed with exit code 143.
+
+> secretary-os@0.1.0 start:worker /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/worker dev
+
+
+> @secretaryos/worker@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/worker
+> tsx src/main.ts
+
+[worker] completed job 13
+[worker] completed job 14
+/Users/macstudio/Desktop/Projects/Secretary OS/apps/worker:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @secretaryos/worker@0.1.0 dev: `tsx src/main.ts`
+Exit status 143
+ ELIFECYCLE  Command failed with exit code 143.

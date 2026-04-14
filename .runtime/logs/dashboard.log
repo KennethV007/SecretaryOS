@@ -851,3 +851,54 @@
  ✓ Compiled /chat in 465ms (603 modules)
  GET /chat 200 in 733ms
 [?25h
+
+> secretary-os@0.1.0 start:dashboard /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/dashboard dev
+
+
+> @secretaryos/dashboard@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/dashboard
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://169.254.227.144:3000
+
+ ✓ Starting...
+ ✓ Ready in 1144ms
+ ✓ Compiled /chat in 500ms (603 modules)
+ GET /chat 200 in 768ms
+ GET /chat 200 in 27ms
+ ✓ Compiled / in 138ms (610 modules)
+ GET / 200 in 204ms
+ GET /chat 200 in 27ms
+ ✓ Compiled /tasks in 153ms (612 modules)
+ GET /tasks 200 in 201ms
+ ✓ Compiled /personas in 179ms (620 modules)
+ GET /personas 200 in 226ms
+ ✓ Compiled /memory in 132ms (622 modules)
+ GET /memory 200 in 181ms
+ GET / 200 in 43ms
+ ✓ Compiled in 189ms (616 modules)
+ GET / 200 in 45ms
+ ✓ Compiled in 142ms (616 modules)
+ GET / 200 in 46ms
+ ✓ Compiled in 161ms (616 modules)
+ GET / 200 in 74ms
+ ✓ Compiled in 104ms (381 modules)
+ GET / 200 in 82ms
+[?25h
+
+> secretary-os@0.1.0 start:dashboard /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/dashboard dev
+
+
+> @secretaryos/dashboard@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/dashboard
+> next dev
+
+   ▲ Next.js 15.5.15
+   - Local:        http://localhost:3000
+   - Network:      http://169.254.227.144:3000
+
+ ✓ Starting...
+ ✓ Ready in 1114ms
+[?25h

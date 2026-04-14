@@ -1,4 +1,4 @@
-import { DataList } from "../../src/components/data-list";
+import { MemoryInspector } from "../../src/components/memory-inspector";
 import { PageHeader } from "../../src/components/page-header";
 import { getMemoryItems } from "../../src/lib/dashboard-api";
 
@@ -11,18 +11,10 @@ export default async function MemoryPage() {
     <div className="dashboard-page">
       <PageHeader
         title="Memory"
-        description="Inspect durable memory surfaced by task execution and retrieval-safe writebacks."
+        description="Inspect durable memory only. Chat transcripts stay in sessions and are not supposed to appear here."
         chip="Recall"
       />
-      <DataList
-        title="Memory Inspector"
-        description="The API returns scoped memory items recorded from completed tasks."
-        items={memoryItems.map((item) => ({
-          title: item.summary ?? item.kind,
-          description: item.content,
-          meta: [item.scope, item.source],
-        }))}
-      />
+      <MemoryInspector items={memoryItems} />
     </div>
   );
 }

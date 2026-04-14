@@ -2,6 +2,7 @@ import { Queue } from "bullmq";
 
 import type {
   EventName,
+  MemoryKind,
   MemoryScope,
   TaskRecord,
   TaskStatus,
@@ -46,6 +47,7 @@ export type MemoryWriteJob = {
   kind: "memory.write";
   taskId: string;
   content: string;
+  memoryKind?: MemoryKind;
   scope: MemoryScope;
   requestedAt: string;
 };

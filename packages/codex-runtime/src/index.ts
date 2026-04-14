@@ -11,6 +11,7 @@ import {
 import { resolvePersonaForMode } from "@secretaryos/personas";
 import { buildPersonaPrompt } from "@secretaryos/prompts";
 import { loadSettings } from "@secretaryos/settings";
+import { listAvailableSkillsSync } from "@secretaryos/skills";
 
 export type ExecutionRequest = {
   taskId: string;
@@ -87,12 +88,47 @@ export function buildExecutionRequest(task: TaskRecord): ExecutionRequest {
   };
 }
 
-export function buildRuntimePrompt(task: TaskRecord): string {
+function buildSkillRegistryPrompt(
+  env: NodeJS.ProcessEnv = process.env,
+): string | undefined {
+  const skills = listAvailableSkillsSync({
+    env,
+  });
+
+  if (skills.length === 0) {
+    return undefined;
+  }
+
+  return [
+    "Available skills registry:",
+    ...skills.map((skill) => {
+      const source =
+        skill.source === "secretaryos_builtin"
+          ? "SecretaryOS"
+          : skill.source === "codex_system"
+            ? "Codex system"
+            : "Codex installed";
+      const approval =
+        skill.approvalClass === null
+          ? "policy n/a"
+          : `approval class ${skill.approvalClass}`;
+
+      return `- ${skill.id} [${source}; executor=${skill.executor}; ${approval}] ${skill.summary}`;
+    }),
+    "When the user asks what skills are available, answer from this registry using these exact skill ids.",
+  ].join("\n");
+}
+
+export function buildRuntimePrompt(
+  task: TaskRecord,
+  env: NodeJS.ProcessEnv = process.env,
+): string {
   const persona = resolvePersonaForMode(
     task.mode ?? DEFAULT_MODE,
     task.personaId,
   );
   const personaPrompt = buildPersonaPrompt(persona, task.mode ?? DEFAULT_MODE);
+  const skillsPrompt = buildSkillRegistryPrompt(env);
 
   return [
     `Persona: ${persona.name} (${persona.slug})`,
@@ -103,6 +139,8 @@ export function buildRuntimePrompt(task: TaskRecord): string {
     "Complete the task safely and concisely. Return the direct result.",
     "",
     personaPrompt,
+    "",
+    skillsPrompt,
     "",
     task.input,
   ]
@@ -196,6 +234,7 @@ export class CodexMcpExecutor implements TaskExecutor {
   constructor(
     private readonly client: CodexCommandClient,
     private readonly config: RuntimeModelConfig,
+    private readonly env: NodeJS.ProcessEnv = process.env,
   ) {}
 
   async executeTask(task: TaskRecord): Promise<ExecutionResult> {
@@ -204,7 +243,7 @@ export class CodexMcpExecutor implements TaskExecutor {
       provider: lane.provider,
       model: lane.model,
       reasoningEffort: lane.reasoningEffort,
-      prompt: buildRuntimePrompt(task),
+      prompt: buildRuntimePrompt(task, this.env),
     });
 
     const outputText = response.outputText.trim();

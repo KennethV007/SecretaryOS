@@ -9,7 +9,9 @@ import {
   CreateSessionInputSchema,
   CreateTaskInputSchema,
   IdSchema,
+  MemoryKindSchema,
   MemoryScopeSchema,
+  MemorySourceSchema,
   PolicySurfaceSchema,
   PromptSurfaceSchema,
   ResolveApprovalInputSchema,
@@ -28,8 +30,8 @@ import {
 } from "@secretaryos/orchestrator";
 import {
   importSkillPack,
+  listAvailableSkills,
   listImportedSkillPacks,
-  listSkills,
 } from "@secretaryos/skills";
 import Fastify, { type FastifyInstance } from "fastify";
 import { z } from "zod";
@@ -64,7 +66,9 @@ const SkillImportSchema = z.object({
 
 const MemoryQuerySchema = z.object({
   text: z.string().min(1).optional(),
+  kind: MemoryKindSchema.optional(),
   scope: MemoryScopeSchema.optional(),
+  source: MemorySourceSchema.optional(),
   projectId: IdSchema.optional(),
   personaId: IdSchema.optional(),
   limit: z.coerce.number().int().positive().max(100).optional(),
@@ -84,6 +88,7 @@ const InternalMemoryWriteSchema = z.object({
   kind: z.literal("memory.write"),
   taskId: IdSchema,
   content: z.string().min(1),
+  memoryKind: MemoryKindSchema.optional(),
   scope: MemoryScopeSchema,
   requestedAt: z.string().datetime(),
 });
@@ -433,11 +438,15 @@ export function buildApiApp(options: {
   });
 
   app.get("/skills", async () => ({
-    items: listSkills(),
+    items: await listAvailableSkills({
+      codexSkillRoot: options.config.codexSkillRoot,
+    }),
   }));
 
   app.get("/skills/packs", async () => ({
-    items: await listImportedSkillPacks(getSkillPackRoot(options.config)),
+    items: await listImportedSkillPacks(getSkillPackRoot(options.config), {
+      codexSkillRoot: options.config.codexSkillRoot,
+    }),
   }));
 
   app.post("/skills/import", async (request, reply) => {
@@ -445,6 +454,9 @@ export function buildApiApp(options: {
     const manifest = await importSkillPack(
       resolve(process.cwd(), body.sourceDir),
       getSkillPackRoot(options.config),
+      {
+        codexSkillRoot: options.config.codexSkillRoot,
+      },
     );
 
     reply.status(201).send(manifest);

@@ -22,7 +22,7 @@ function createTaskRecord(overrides: Partial<TaskRecord> = {}): TaskRecord {
   };
 }
 
-test("processTaskExecutionJob completes a runnable task and requests memory write", async () => {
+test("processTaskExecutionJob does not auto-promote generic chat output into memory", async () => {
   const task = createTaskRecord();
   const updates: TaskRecord[] = [];
   const memoryWrites: string[] = [];
@@ -47,7 +47,71 @@ test("processTaskExecutionJob completes a runnable task and requests memory writ
   assert.equal(result.task.status, "complete");
   assert.equal(updates.at(0)?.status, "running");
   assert.equal(updates.at(-1)?.status, "complete");
-  assert.equal(memoryWrites.length, 1);
+  assert.equal(memoryWrites.length, 0);
+});
+
+test("processTaskExecutionJob promotes explicit remember requests into memory", async () => {
+  const task = createTaskRecord({
+    input: "Remember my preference for terse replies.",
+  });
+  const memoryWrites: Array<{ content: string; memoryKind?: string }> = [];
+
+  const result = await processTaskExecutionJob(
+    {
+      kind: "task.execute",
+      task,
+      requestedAt: new Date().toISOString(),
+    },
+    {
+      executor: createStaticExecutor(),
+      onMemoryWriteRequested(job) {
+        memoryWrites.push({
+          content: job.content,
+          memoryKind: job.memoryKind,
+        });
+      },
+    },
+  );
+
+  assert.equal(result.task.status, "complete");
+  assert.deepEqual(memoryWrites, [
+    {
+      content: "Remember my preference for terse replies.",
+      memoryKind: "preference",
+    },
+  ]);
+});
+
+test("processTaskExecutionJob promotes project notes without treating them as transcript spam", async () => {
+  const task = createTaskRecord({
+    input: "Project note: use pnpm in this repository.",
+  });
+  const memoryWrites: Array<{ content: string; memoryKind?: string }> = [];
+
+  const result = await processTaskExecutionJob(
+    {
+      kind: "task.execute",
+      task,
+      requestedAt: new Date().toISOString(),
+    },
+    {
+      executor: createStaticExecutor(),
+      onMemoryWriteRequested(job) {
+        memoryWrites.push({
+          content: job.content,
+          memoryKind: job.memoryKind,
+        });
+      },
+    },
+  );
+
+  assert.equal(result.task.status, "complete");
+  assert.deepEqual(memoryWrites, [
+    {
+      content: "Project note: use pnpm in this repository.",
+      memoryKind: "project",
+    },
+  ]);
 });
 
 test("processTaskExecutionJob leaves approval-gated tasks paused", async () => {

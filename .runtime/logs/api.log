@@ -14540,3 +14540,37 @@ Exit status 143
  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @secretaryos/api@0.1.0 dev: `tsx watch src/index.ts`
 Exit status 143
  ELIFECYCLE  Command failed with exit code 143.
+
+> secretary-os@0.1.0 start:api /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/api dev
+
+
+> @secretaryos/api@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/api
+> tsx watch src/index.ts
+
+1:27:34 AM [tsx] change in ./../../packages/skills/src/index.ts Restarting...
+c1:27:54 AM [tsx] change in ./src/app.ts Restarting...
+c1:29:00 AM [tsx] change in ./../../packages/skills/src/index.ts Restarting...
+c1:29:06 AM [tsx] change in ./../../packages/skills/src/index.ts Restarting...
+c1:30:01 AM [tsx] change in ./../../packages/skills/src/index.ts Restarting...
+c1:30:29 AM [tsx] change in ./../../packages/skills/src/index.ts Restarting...
+c1:30:48 AM [tsx] change in ./../../packages/skills/src/index.ts Restarting...
+c1:31:07 AM [tsx] change in ./../../packages/skills/src/index.ts Restarting...
+c1:31:16 AM [tsx] change in ./../../packages/skills/src/index.ts Restarting...
+c1:35:29 AM [tsx] change in ./../../packages/orchestrator/src/index.ts Restarting...
+c/Users/macstudio/Desktop/Projects/Secretary OS/apps/api:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @secretaryos/api@0.1.0 dev: `tsx watch src/index.ts`
+Exit status 143
+ ELIFECYCLE  Command failed with exit code 143.
+
+> secretary-os@0.1.0 start:api /Users/macstudio/Desktop/Projects/Secretary OS
+> pnpm --filter @secretaryos/api dev
+
+
+> @secretaryos/api@0.1.0 dev /Users/macstudio/Desktop/Projects/Secretary OS/apps/api
+> tsx watch src/index.ts
+
+/Users/macstudio/Desktop/Projects/Secretary OS/apps/api:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @secretaryos/api@0.1.0 dev: `tsx watch src/index.ts`
+Exit status 143
+ ELIFECYCLE  Command failed with exit code 143.

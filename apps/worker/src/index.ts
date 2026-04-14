@@ -3,7 +3,7 @@ import {
   type TaskExecutor,
   createStaticExecutor,
 } from "@secretaryos/codex-runtime";
-import { type TaskRecord, createId } from "@secretaryos/core";
+import { type MemoryKind, type TaskRecord, createId } from "@secretaryos/core";
 import type {
   MemoryWriteJob,
   TaskExecutionJob,
@@ -76,6 +76,109 @@ function resolveMemoryScope(task: TaskRecord): MemoryWriteJob["scope"] {
   return "global";
 }
 
+function extractLatestUserMessage(task: TaskRecord): string {
+  const segments = task.input
+    .split(/\n\s*\n/)
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+
+  return segments.at(-1) ?? task.input.trim();
+}
+
+function isExplicitMemoryRequest(text: string): boolean {
+  const normalized = text.trim().toLowerCase();
+
+  return [
+    /\bremember\b/,
+    /\bdon't forget\b/,
+    /\bdo not forget\b/,
+    /\bnote that\b/,
+    /\bsave this\b/,
+    /\bkeep in mind\b/,
+    /\bmy preference\b/,
+    /\bi prefer\b/,
+    /\bcall me\b/,
+    /\bmy favorite\b/,
+  ].some((pattern) => pattern.test(normalized));
+}
+
+type DurableMemoryCandidate = {
+  content: string;
+  memoryKind: MemoryKind;
+};
+
+function extractDurableMemoryCandidate(
+  text: string,
+): DurableMemoryCandidate | undefined {
+  const content = text.trim();
+  const normalized = content.toLowerCase();
+
+  if (!content) {
+    return undefined;
+  }
+
+  if (
+    /\bmy preference\b/.test(normalized) ||
+    /\bi prefer\b/.test(normalized) ||
+    /\bcall me\b/.test(normalized) ||
+    /\bmy favorite\b/.test(normalized)
+  ) {
+    return {
+      content,
+      memoryKind: "preference",
+    };
+  }
+
+  if (
+    /^project note:/i.test(content) ||
+    /^project:/i.test(content) ||
+    /^repo note:/i.test(content)
+  ) {
+    return {
+      content,
+      memoryKind: "project",
+    };
+  }
+
+  if (
+    /^reminder:/i.test(content) ||
+    /^remember to\b/i.test(content) ||
+    /^follow up\b/i.test(content)
+  ) {
+    return {
+      content,
+      memoryKind: "event",
+    };
+  }
+
+  if (isExplicitMemoryRequest(content)) {
+    return {
+      content,
+      memoryKind: "task",
+    };
+  }
+
+  return undefined;
+}
+
+function buildMemoryWriteJob(task: TaskRecord): MemoryWriteJob | undefined {
+  const latestUserMessage = extractLatestUserMessage(task);
+  const candidate = extractDurableMemoryCandidate(latestUserMessage);
+
+  if (!candidate) {
+    return undefined;
+  }
+
+  return {
+    kind: "memory.write",
+    taskId: task.id,
+    content: candidate.content,
+    memoryKind: candidate.memoryKind,
+    scope: resolveMemoryScope(task),
+    requestedAt: new Date().toISOString(),
+  };
+}
+
 export async function processTaskExecutionJob(
   job: TaskExecutionJob,
   dependencies: WorkerDependencies,
@@ -136,14 +239,13 @@ export async function processTaskExecutionJob(
 
     await dependencies.onTaskCompleted?.(outcome);
 
-    if (result.status === "complete" && result.outputText.trim()) {
-      await dependencies.onMemoryWriteRequested?.({
-        kind: "memory.write",
-        taskId: completedTask.id,
-        content: result.outputText,
-        scope: resolveMemoryScope(completedTask),
-        requestedAt: new Date().toISOString(),
-      });
+    const memoryWriteJob =
+      result.status === "complete"
+        ? buildMemoryWriteJob(completedTask)
+        : undefined;
+
+    if (memoryWriteJob) {
+      await dependencies.onMemoryWriteRequested?.(memoryWriteJob);
     }
 
     return outcome;

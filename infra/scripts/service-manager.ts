@@ -1,18 +1,18 @@
 import "dotenv/config";
 
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import {
+  closeSync,
   existsSync,
   mkdirSync,
   openSync,
   readFileSync,
-  unlinkSync,
-  writeFileSync,
 } from "node:fs";
-import { resolve } from "node:path";
+import { unlink, writeFile } from "node:fs/promises";
+import { basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-type ManagedService = {
+export type ManagedService = {
   key: string;
   label: string;
   command: string;
@@ -20,18 +20,31 @@ type ManagedService = {
   enabled?: (env: NodeJS.ProcessEnv) => boolean;
 };
 
-type StoredServiceState = {
+export type StoredServiceState = {
   pid: number;
   logPath: string;
   startedAt: string;
 };
 
-type RuntimeState = Record<string, StoredServiceState>;
+export type RuntimeState = Record<string, StoredServiceState>;
+
+export type ProcessSnapshot = {
+  running: boolean;
+  zombie: boolean;
+  command?: string;
+};
 
 const REPO_ROOT = resolve(fileURLToPath(new URL("../../", import.meta.url)));
 const RUNTIME_DIR = resolve(REPO_ROOT, ".runtime");
 const LOG_DIR = resolve(RUNTIME_DIR, "logs");
 const STATE_PATH = resolve(RUNTIME_DIR, "services.json");
+const SERVICE_ENV_OVERRIDES = {
+  API_BASE_URL: "http://127.0.0.1:3001",
+  NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:3001",
+  API_PORT: "3001",
+};
+const STOP_TIMEOUT_MS = 5000;
+const STOP_POLL_MS = 150;
 
 const SERVICES: ManagedService[] = [
   {
@@ -63,13 +76,19 @@ const SERVICES: ManagedService[] = [
 
 const CORE_SERVICE_KEYS = new Set(["api", "worker", "gateway"]);
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolvePromise) => {
+    setTimeout(resolvePromise, ms);
+  });
+}
+
 function ensureRuntimeDirs(): void {
   mkdirSync(LOG_DIR, {
     recursive: true,
   });
 }
 
-function loadState(): RuntimeState {
+export function loadState(): RuntimeState {
   if (!existsSync(STATE_PATH)) {
     return {};
   }
@@ -81,25 +100,119 @@ function loadState(): RuntimeState {
   }
 }
 
-function saveState(state: RuntimeState): void {
+export async function saveState(state: RuntimeState): Promise<void> {
+  if (Object.keys(state).length === 0) {
+    if (existsSync(STATE_PATH)) {
+      await unlink(STATE_PATH);
+    }
+
+    return;
+  }
+
   ensureRuntimeDirs();
-  writeFileSync(STATE_PATH, `${JSON.stringify(state, null, 2)}\n`, "utf8");
+  await writeFile(STATE_PATH, `${JSON.stringify(state, null, 2)}\n`, "utf8");
 }
 
-function isPidRunning(pid: number): boolean {
-  try {
-    process.kill(pid, 0);
-    return true;
-  } catch {
+export function getProcessSnapshot(pid: number): ProcessSnapshot {
+  if (!Number.isInteger(pid) || pid <= 0) {
+    return {
+      running: false,
+      zombie: false,
+    };
+  }
+
+  const result = spawnSync("ps", ["-o", "stat=,command=", "-p", String(pid)], {
+    encoding: "utf8",
+  });
+  const output = result.stdout.trim();
+
+  if (!output) {
+    return {
+      running: false,
+      zombie: false,
+    };
+  }
+
+  const [line] = output
+    .split("\n")
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+
+  if (!line) {
+    return {
+      running: false,
+      zombie: false,
+    };
+  }
+
+  const match = /^([^\s]+)\s+(.*)$/.exec(line);
+
+  if (!match) {
+    return {
+      running: true,
+      zombie: false,
+      command: line,
+    };
+  }
+
+  const [, stat, command] = match;
+  const zombie = stat.includes("Z");
+
+  return {
+    running: !zombie,
+    zombie,
+    command: command.trim(),
+  };
+}
+
+function buildServiceCommandHints(service: ManagedService): string[] {
+  return [
+    basename(service.command),
+    ...service.args.filter(
+      (arg) => !arg.startsWith("-") && /^[A-Za-z0-9_./:@+-]+$/.test(arg),
+    ),
+  ];
+}
+
+export function matchesManagedServiceCommand(
+  service: ManagedService,
+  command?: string,
+): boolean {
+  if (!command) {
     return false;
   }
+
+  const hints = buildServiceCommandHints(service);
+
+  return hints.every((hint) => command.includes(hint));
 }
 
-function normalizeState(state: RuntimeState): RuntimeState {
+export function isServiceRunning(
+  service: ManagedService,
+  runtime: StoredServiceState,
+): boolean {
+  const snapshot = getProcessSnapshot(runtime.pid);
+
+  return (
+    snapshot.running && matchesManagedServiceCommand(service, snapshot.command)
+  );
+}
+
+export function normalizeState(
+  state: RuntimeState,
+  services: ManagedService[] = SERVICES,
+): RuntimeState {
+  const serviceMap = new Map(services.map((service) => [service.key, service]));
   const nextState: RuntimeState = {};
 
   for (const [key, value] of Object.entries(state)) {
-    if (isPidRunning(value.pid)) {
+    const service = serviceMap.get(key);
+
+    if (!service) {
+      continue;
+    }
+
+    if (isServiceRunning(service, value)) {
       nextState[key] = value;
     }
   }
@@ -111,7 +224,55 @@ function getServiceLogPath(service: ManagedService): string {
   return resolve(LOG_DIR, `${service.key}.log`);
 }
 
-function startService(service: ManagedService, state: RuntimeState): void {
+function buildServiceEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  return {
+    ...env,
+    ...SERVICE_ENV_OVERRIDES,
+  };
+}
+
+async function waitForProcessExit(
+  pid: number,
+  timeoutMs = STOP_TIMEOUT_MS,
+): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    if (!getProcessSnapshot(pid).running) {
+      return true;
+    }
+
+    await sleep(STOP_POLL_MS);
+  }
+
+  return !getProcessSnapshot(pid).running;
+}
+
+function trySignal(targetPid: number, signal: NodeJS.Signals): boolean {
+  try {
+    process.kill(targetPid, signal);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function signalManagedProcessTree(
+  runtime: StoredServiceState,
+  signal: NodeJS.Signals,
+): boolean {
+  if (runtime.pid <= 0) {
+    return false;
+  }
+
+  return trySignal(-runtime.pid, signal) || trySignal(runtime.pid, signal);
+}
+
+export async function startService(
+  service: ManagedService,
+  state: RuntimeState,
+  env: NodeJS.ProcessEnv = process.env,
+): Promise<void> {
   if (state[service.key]) {
     console.log(
       `[start:all] ${service.label} already running with pid ${state[service.key].pid}.`,
@@ -119,34 +280,49 @@ function startService(service: ManagedService, state: RuntimeState): void {
     return;
   }
 
+  ensureRuntimeDirs();
   const logPath = getServiceLogPath(service);
   const logFd = openSync(logPath, "a");
   const child = spawn(service.command, service.args, {
     cwd: REPO_ROOT,
     detached: true,
     stdio: ["ignore", logFd, logFd],
-    env: {
-      ...process.env,
-      API_BASE_URL: "http://127.0.0.1:3001",
-      NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:3001",
-      API_PORT: "3001",
-    },
+    env: buildServiceEnv(env),
   });
 
+  closeSync(logFd);
   child.unref();
 
+  if (!child.pid) {
+    console.log(`[start:all] failed to start ${service.label}.`);
+    return;
+  }
+
   state[service.key] = {
-    pid: child.pid ?? -1,
+    pid: child.pid,
     logPath,
     startedAt: new Date().toISOString(),
   };
 
+  await sleep(250);
+
+  if (!isServiceRunning(service, state[service.key])) {
+    delete state[service.key];
+    console.log(
+      `[start:all] ${service.label} exited during startup. Check ${logPath}.`,
+    );
+    return;
+  }
+
   console.log(
-    `[start:all] started ${service.label} with pid ${child.pid ?? "unknown"}; log: ${logPath}`,
+    `[start:all] started ${service.label} with pid ${child.pid}; log: ${logPath}`,
   );
 }
 
-function stopService(service: ManagedService, state: RuntimeState): void {
+export async function stopService(
+  service: ManagedService,
+  state: RuntimeState,
+): Promise<void> {
   const runtime = state[service.key];
 
   if (!runtime) {
@@ -154,12 +330,27 @@ function stopService(service: ManagedService, state: RuntimeState): void {
     return;
   }
 
-  try {
-    process.kill(runtime.pid, "SIGTERM");
-    console.log(`[stop:all] stopped ${service.label} (${runtime.pid}).`);
-  } catch {
+  if (!isServiceRunning(service, runtime)) {
     console.log(
-      `[stop:all] ${service.label} pid ${runtime.pid} was not running.`,
+      `[stop:all] ${service.label} had stale state for pid ${runtime.pid}.`,
+    );
+    delete state[service.key];
+    return;
+  }
+
+  signalManagedProcessTree(runtime, "SIGTERM");
+  let stopped = await waitForProcessExit(runtime.pid);
+
+  if (!stopped) {
+    signalManagedProcessTree(runtime, "SIGKILL");
+    stopped = await waitForProcessExit(runtime.pid, 1000);
+  }
+
+  if (stopped) {
+    console.log(`[stop:all] stopped ${service.label} (${runtime.pid}).`);
+  } else {
+    console.log(
+      `[stop:all] ${service.label} did not exit cleanly; removing tracked state for pid ${runtime.pid}.`,
     );
   }
 
@@ -179,12 +370,12 @@ function printStatus(service: ManagedService, state: RuntimeState): void {
   );
 }
 
-function startServices(
+async function startServices(
   services: ManagedService[],
   env: NodeJS.ProcessEnv = process.env,
-): void {
+): Promise<void> {
   ensureRuntimeDirs();
-  const state = normalizeState(loadState());
+  const state = normalizeState(loadState(), SERVICES);
 
   for (const service of services) {
     if (service.enabled && !service.enabled(env)) {
@@ -194,40 +385,41 @@ function startServices(
       continue;
     }
 
-    startService(service, state);
+    await startService(service, state, env);
   }
 
-  saveState(state);
+  await saveState(state);
 }
 
-export function runStartAll(env: NodeJS.ProcessEnv = process.env): void {
-  startServices(SERVICES, env);
+export async function runStartAll(
+  env: NodeJS.ProcessEnv = process.env,
+): Promise<void> {
+  await startServices(SERVICES, env);
 }
 
-export function runStartCore(env: NodeJS.ProcessEnv = process.env): void {
-  startServices(
+export async function runStartCore(
+  env: NodeJS.ProcessEnv = process.env,
+): Promise<void> {
+  await startServices(
     SERVICES.filter((service) => CORE_SERVICE_KEYS.has(service.key)),
     env,
   );
 }
 
-export function runStopAll(): void {
-  const state = normalizeState(loadState());
+export async function runStopAll(): Promise<void> {
+  const state = normalizeState(loadState(), SERVICES);
 
   for (const service of [...SERVICES].reverse()) {
-    stopService(service, state);
+    await stopService(service, state);
   }
 
-  if (Object.keys(state).length === 0 && existsSync(STATE_PATH)) {
-    unlinkSync(STATE_PATH);
-    return;
-  }
-
-  saveState(state);
+  await saveState(state);
 }
 
-export function runStatusAll(env: NodeJS.ProcessEnv = process.env): void {
-  const state = normalizeState(loadState());
+export async function runStatusAll(
+  env: NodeJS.ProcessEnv = process.env,
+): Promise<void> {
+  const state = normalizeState(loadState(), SERVICES);
 
   for (const service of SERVICES) {
     if (service.enabled && !service.enabled(env)) {
@@ -238,25 +430,34 @@ export function runStatusAll(env: NodeJS.ProcessEnv = process.env): void {
     printStatus(service, state);
   }
 
-  saveState(state);
+  await saveState(state);
 }
 
-const mode = process.argv[2] ?? "start";
+async function main(): Promise<void> {
+  const mode = process.argv[2] ?? "start";
+
+  if (mode === "start") {
+    await runStartAll();
+  } else if (mode === "start-core") {
+    await runStartCore();
+  } else if (mode === "stop") {
+    await runStopAll();
+  } else if (mode === "status") {
+    await runStatusAll();
+  } else {
+    console.error(`Unknown service-manager mode: ${mode}`);
+    process.exitCode = 1;
+  }
+}
 
 if (
   process.argv[1] &&
   fileURLToPath(import.meta.url) === resolve(process.argv[1])
 ) {
-  if (mode === "start") {
-    runStartAll();
-  } else if (mode === "start-core") {
-    runStartCore();
-  } else if (mode === "stop") {
-    runStopAll();
-  } else if (mode === "status") {
-    runStatusAll();
-  } else {
-    console.error(`Unknown service-manager mode: ${mode}`);
+  void main().catch((error: unknown) => {
+    console.error(
+      error instanceof Error ? (error.stack ?? error.message) : String(error),
+    );
     process.exitCode = 1;
-  }
+  });
 }
