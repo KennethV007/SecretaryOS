@@ -16,6 +16,7 @@
     "@secretaryos/core": "workspace:*",
     "@secretaryos/events": "workspace:*",
     "@secretaryos/orchestrator": "workspace:*",
+    "@secretaryos/memory": "workspace:*",
     "@secretaryos/personas": "workspace:*",
     "@secretaryos/policy": "workspace:*",
     "@secretaryos/skills": "workspace:*",

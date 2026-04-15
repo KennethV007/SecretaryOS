@@ -45,7 +45,7 @@ Workflow selection, routing, and task packet construction.
 Codex workflow definitions and execution request builders.
 
 ### `packages/memory`
-MemPalace retrieval and memory write policies.
+MemPalace retrieval, transcript mining, and memory context assembly.
 
 ### `packages/policy`
 Approval classification and gating rules.

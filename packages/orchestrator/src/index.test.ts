@@ -4,7 +4,32 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 
+import type { MemoryClient } from "@secretaryos/memory";
 import { SecretaryOrchestrator, createInMemoryRuntimeState } from "./index.js";
+
+function createMemoryClientStub(results: string[]): MemoryClient {
+  return {
+    async search() {
+      return {
+        query: "stub",
+        results: results.map((content) => ({ content })),
+        rawOutput: results.join("\n"),
+      };
+    },
+    async ingestConversationExport(sourcePath: string) {
+      return {
+        sourcePath,
+        stdout: "",
+        stderr: "",
+      };
+    },
+    async status() {
+      return {
+        available: true,
+      };
+    },
+  };
+}
 
 test("planner sessions keep the default persona by default", () => {
   const runtime = new SecretaryOrchestrator(createInMemoryRuntimeState());
@@ -120,6 +145,44 @@ test("project memory writes preserve explicit structured kinds", async () => {
   assert.equal(memory.kind, "project");
   assert.equal(runtime.listMemory({ kind: "project" }).length, 1);
   assert.equal(runtime.listMemory({ kind: "preference" }).length, 0);
+});
+
+test("task creation injects structured and semantic memory context", async () => {
+  const runtime = new SecretaryOrchestrator(createInMemoryRuntimeState(), {
+    memoryClient: createMemoryClientStub([
+      "User prefers terse replies.",
+      "Project note: use pnpm in this repository.",
+    ]),
+  });
+  const session = runtime.createSession({
+    channel: "dashboard",
+    channelSessionKey: "memory-injection",
+    userName: "Local User",
+    mode: "assistant",
+  });
+
+  runtime.recordMemoryWrite({
+    kind: "memory.write",
+    taskId: "memory_task_1",
+    content: "User prefers terse replies.",
+    memoryKind: "preference",
+    scope: "global",
+    requestedAt: new Date().toISOString(),
+  });
+
+  const task = await runtime.createTask({
+    sessionId: session.id,
+    channel: "dashboard",
+    content: "What is my preference for terse replies?",
+  });
+
+  assert.match(task.task.memoryContext ?? "", /Structured facts:/);
+  assert.match(task.task.memoryContext ?? "", /User prefers terse replies\./);
+  assert.match(task.task.memoryContext ?? "", /MemPalace recall:/);
+  assert.match(
+    task.task.memoryContext ?? "",
+    /Project note: use pnpm in this repository\./,
+  );
 });
 
 test("global active persona persists and becomes the default for new tasks", async () => {

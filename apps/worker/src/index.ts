@@ -3,7 +3,12 @@ import {
   type TaskExecutor,
   createStaticExecutor,
 } from "@secretaryos/codex-runtime";
-import { type MemoryKind, type TaskRecord, createId } from "@secretaryos/core";
+import {
+  type MemoryKind,
+  type TaskRecord,
+  createId,
+  resolveMemoryScopeForTask,
+} from "@secretaryos/core";
 import type {
   MemoryWriteJob,
   TaskExecutionJob,
@@ -62,18 +67,6 @@ async function executeTaskWithWorkflow(
       outputTokens: Math.max(1, Math.ceil(runbook.outputText.length / 4)),
     },
   };
-}
-
-function resolveMemoryScope(task: TaskRecord): MemoryWriteJob["scope"] {
-  if (task.mode === "after_hours") {
-    return "after_hours_only";
-  }
-
-  if (task.projectId) {
-    return "project";
-  }
-
-  return "global";
 }
 
 function extractLatestUserMessage(task: TaskRecord): string {
@@ -174,7 +167,10 @@ function buildMemoryWriteJob(task: TaskRecord): MemoryWriteJob | undefined {
     taskId: task.id,
     content: candidate.content,
     memoryKind: candidate.memoryKind,
-    scope: resolveMemoryScope(task),
+    scope: resolveMemoryScopeForTask({
+      mode: task.mode,
+      projectId: task.projectId,
+    }),
     requestedAt: new Date().toISOString(),
   };
 }

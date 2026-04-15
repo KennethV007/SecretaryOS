@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 import { createBullMqTaskQueue } from "@secretaryos/events";
+import { createMemoryClient } from "@secretaryos/memory";
 import {
   SecretaryOrchestrator,
   createInMemoryRuntimeState,
@@ -11,8 +12,10 @@ import { loadApiConfig } from "./config.js";
 
 const config = loadApiConfig();
 const taskQueue = createBullMqTaskQueue(config.redisUrl);
+const memoryClient = createMemoryClient();
 const runtime = new SecretaryOrchestrator(createInMemoryRuntimeState(), {
   taskQueue,
+  memoryClient,
 });
 const app = buildApiApp({
   config,

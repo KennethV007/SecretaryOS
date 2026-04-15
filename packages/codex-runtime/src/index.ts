@@ -140,6 +140,8 @@ export function buildRuntimePrompt(
     "",
     personaPrompt,
     "",
+    task.memoryContext ? task.memoryContext : undefined,
+    "",
     skillsPrompt,
     "",
     task.input,

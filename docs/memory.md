@@ -9,6 +9,7 @@ Memory is external to the model so assistant continuity survives model swaps, to
 - raw transcript storage
 - semantic retrieval
 - long-horizon recall
+- transcript mining from completed conversations
 
 ### Structured metadata store
 - durable facts
@@ -39,6 +40,7 @@ After-hours memory must not be retrieved into assistant or planner execution unl
 3. Query MemPalace for semantic recall.
 4. Rerank and compress retrieved items.
 5. Inject only relevant memory into the workflow input.
+6. Mine completed transcripts back into MemPalace so future retrieval can find them.
 
 ## Write policy
 - Always store raw conversational artifacts in the memory layer.

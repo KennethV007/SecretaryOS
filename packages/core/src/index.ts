@@ -197,6 +197,7 @@ export const TaskRecordSchema = z.object({
   title: z.string().min(1).optional(),
   summary: z.string().optional(),
   outputText: z.string().optional(),
+  memoryContext: z.string().optional(),
   errorMessage: z.string().optional(),
 });
 
@@ -347,6 +348,21 @@ export const MemoryRecordSchema = z.object({
   taskId: IdSchema.optional(),
   createdAt: TimestampSchema,
 });
+
+export function resolveMemoryScopeForTask(input: {
+  mode?: Mode;
+  projectId?: string;
+}): MemoryScope {
+  if (input.mode === "after_hours") {
+    return "after_hours_only";
+  }
+
+  if (input.projectId) {
+    return "project";
+  }
+
+  return "global";
+}
 
 export const CreateSessionInputSchema = z.object({
   channel: ChannelSchema,

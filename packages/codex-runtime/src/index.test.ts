@@ -144,6 +144,22 @@ test("buildRuntimePrompt includes task context", () => {
   assert.match(prompt, /Use the watered-down persona prompt/);
 });
 
+test("buildRuntimePrompt injects memory context ahead of task input", () => {
+  const prompt = buildRuntimePrompt(
+    createTask({
+      memoryContext:
+        "Relevant memory context:\n- [preference/global] terse replies",
+    }),
+  );
+
+  assert.match(prompt, /Relevant memory context:/);
+  assert.match(prompt, /terse replies/);
+  assert.match(
+    prompt,
+    /Relevant memory context:[\s\S]*Summarize the current project state\./,
+  );
+});
+
 test("buildRuntimePrompt includes the unified skill registry", () => {
   const rootDir = mkdtempSync(join(tmpdir(), "secretary-runtime-skills-"));
   const codexSkillDir = join(rootDir, ".codex", "skills", "repo-helper");

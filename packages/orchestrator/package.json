@@ -16,6 +16,7 @@
     "@secretaryos/core": "workspace:*",
     "@secretaryos/evals": "workspace:*",
     "@secretaryos/events": "workspace:*",
+    "@secretaryos/memory": "workspace:*",
     "@secretaryos/replays": "workspace:*",
     "@secretaryos/personas": "workspace:*",
     "@secretaryos/policy": "workspace:*"

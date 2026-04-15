@@ -1,3 +1,7 @@
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
 import {
   type ApprovalRecord,
   type ApprovalStatus,
@@ -27,9 +31,11 @@ import {
   type UsageRecord,
   type UsageWindow,
   createId,
+  resolveMemoryScopeForTask,
 } from "@secretaryos/core";
 import { createEvalRun } from "@secretaryos/evals";
 import type { MemoryWriteJob, TaskExecutionJob } from "@secretaryos/events";
+import { type MemoryClient, retrieveMemoryContext } from "@secretaryos/memory";
 import {
   DEFAULT_ACTIVE_CHARACTER_PATH,
   DEFAULT_PERSONA_PACK_ROOT,
@@ -179,6 +185,31 @@ function buildConversationContext(messages: SessionMessageRecord[]): string {
   ].join("\n");
 }
 
+function buildConversationTranscriptMarkdown(input: {
+  session: SessionRecord;
+  task: TaskRecord;
+  outputText?: string;
+}): string {
+  const lines = [
+    "# Transcript",
+    "",
+    `- session: ${input.session.id}`,
+    `- task: ${input.task.id}`,
+    `- mode: ${input.task.mode ?? input.session.activeMode}`,
+    `- persona: ${input.task.personaId ?? input.session.activePersonaId}`,
+    input.task.projectId ? `- project: ${input.task.projectId}` : undefined,
+    "",
+    "## User",
+    input.task.input.trim(),
+    "",
+    "## Assistant",
+    (input.outputText ?? "").trim() || "(no output)",
+    "",
+  ];
+
+  return lines.filter((line) => line !== undefined).join("\n");
+}
+
 export function createInMemoryRuntimeState(
   options: {
     personaPackRoot?: string;
@@ -278,6 +309,7 @@ export class SecretaryOrchestrator {
     private readonly state: InMemoryRuntimeState = createInMemoryRuntimeState(),
     private readonly options: {
       taskQueue?: TaskQueuePort;
+      memoryClient?: MemoryClient;
       personaPackRoot?: string;
       activePersonaStorePath?: string;
     } = {},
@@ -377,6 +409,77 @@ export class SecretaryOrchestrator {
     });
 
     return true;
+  }
+
+  private async buildMemoryContext(input: {
+    content: string;
+    mode: Mode;
+    personaId: string;
+    projectId?: string;
+  }): Promise<string | undefined> {
+    const memoryClient = this.options.memoryClient;
+
+    if (!memoryClient) {
+      return undefined;
+    }
+
+    const scope = resolveMemoryScopeForTask({
+      mode: input.mode,
+      projectId: input.projectId,
+    });
+
+    try {
+      const limit = 8;
+      const retrieval = await retrieveMemoryContext(memoryClient, {
+        text: input.content,
+        scope,
+        mode: input.mode,
+        projectId: input.projectId,
+        personaId: input.personaId,
+        structuredMemories: Array.from(this.state.memories.values()),
+        limit,
+      });
+
+      return retrieval.text;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "MemPalace retrieval failed.";
+
+      throw new OrchestratorError(503, message);
+    }
+  }
+
+  private async ingestMemoryTranscript(
+    nextTask: TaskRecord,
+    outputText?: string,
+  ): Promise<void> {
+    const memoryClient = this.options.memoryClient;
+
+    if (!memoryClient) {
+      return;
+    }
+
+    const transcriptDir = mkdtempSync(join(tmpdir(), "secretary-memory-"));
+
+    try {
+      const transcriptPath = join(transcriptDir, "conversation.md");
+
+      writeFileSync(
+        transcriptPath,
+        buildConversationTranscriptMarkdown({
+          session: this.getSessionOrThrow(nextTask.sessionId),
+          task: nextTask,
+          outputText,
+        }),
+      );
+
+      await memoryClient.ingestConversationExport(transcriptDir);
+    } finally {
+      rmSync(transcriptDir, {
+        recursive: true,
+        force: true,
+      });
+    }
   }
 
   getStats(): RuntimeStats {
@@ -523,6 +626,13 @@ export class SecretaryOrchestrator {
 
     this.state.sessions.set(activeSession.id, activeSession);
 
+    const memoryContext = await this.buildMemoryContext({
+      content: input.content,
+      mode,
+      personaId: persona.id,
+      projectId: input.projectId,
+    });
+
     const packedInput = [
       buildConversationContext(this.getMessages(activeSession.id).slice(-12)),
       input.content,
@@ -544,6 +654,7 @@ export class SecretaryOrchestrator {
       mode,
       personaId: persona.id,
       projectId: input.projectId,
+      memoryContext,
     };
 
     if (input.taskType && input.taskType !== task.type) {
@@ -657,6 +768,15 @@ export class SecretaryOrchestrator {
     }
 
     this.state.messages.set(nextTask.sessionId, updatedMessages);
+
+    if (nextTask.status === "complete") {
+      void this.ingestMemoryTranscript(
+        nextTask,
+        result.outputText ?? nextTask.outputText,
+      ).catch(() => {
+        // MemPalace ingestion is best-effort; retrieval remains the blocking path.
+      });
+    }
 
     this.state.replayCases.push(
       captureReplayCase({
